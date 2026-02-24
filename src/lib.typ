@@ -1,3 +1,3 @@
 #import "components.typ": *
-#import "exam.typ": *
+#import "config/exam.typ": *
 #import "state.typ": *

@@ -1,0 +1,8 @@
+[package]
+name = "examst"
+version = "0.0.1"
+entrypoint = "src/lib.typ"
+authors = []
+license = "MIT"
+description = "Utilities for exam-writing"
+exclude = [ "/docs/*", "/example/*" ]
