@@ -13,5 +13,5 @@
 ]
 
 #question(points: (points: 2, bonus: 5))[
-  BODY 3
+  BODY 3 
 ]

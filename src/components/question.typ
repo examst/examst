@@ -61,30 +61,37 @@
   }
 )
 
-#let question(points: (:), aggregate: false, body) = block({
-  state.question-depth.update(it => it + 1)
-  context [
-    #state.question-number.step(level: state.question-depth.get())
-  ]
-  _q-start(points)
-  [
-    #context[
-      #let _points-end-label = if aggregate {
-        _q-end-label()
-      } else {
-        if next-q-start-label() != none { next-q-start-label() } else { _q-end-label() }
-      }
-      Q#state.question-number.display()
-      (#points-between(
-        _q-start-label(),
-        _points-end-label,
-      ).pairs().map(((k, v)) => [#v #k]).join(", "))
-    ]
-    #body
-  ]
+#let question(points: (:), aggregate: false, inline: false, body) = {
+  let wrapper = if inline { box } else { block.with(inset: (left: 1em)) }
+  wrapper({
+    state.question-depth.update(it => it + 1)
 
-  _q-end()
-  context[
-    #state.question-depth.update(it => it - 1)
-  ]
-})
+    context [
+      #state.question-number.step(level: state.question-depth.get())
+    ]
+
+    _q-start(points)
+
+    [
+      #context[
+        #let _points-end-label = if aggregate {
+          _q-end-label()
+        } else {
+          if next-q-start-label() != none { next-q-start-label() } else { _q-end-label() }
+        }
+        Q#state.question-number.display()
+        (#points-between(
+          _q-start-label(),
+          _points-end-label,
+        ).pairs().map(((k, v)) => [#v #k]).join(", "))
+      ]
+      #body
+    ]
+
+    _q-end()
+
+    context[
+      #state.question-depth.update(it => it - 1)
+    ]
+  })
+}
