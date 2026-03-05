@@ -14,22 +14,22 @@
   ],
 )
 
-#question(points: (points: 10), aggregate: true)[
+#question(points: 10, aggregate: true)[
   Why is there air?
 ]
 
 #question(aggregate: false)[
  What if there were no air? 
-  #question(points: (points: 5))[
+  #question(points: 5)[
     Describe the effect on the balloon industry.
   ]
   
-  #question(points: (points: 5))[
+  #question(points: 5)[
     Describe the effect on the aircraft industry.
   ]
 ]
 
-#question(points: (points: 20), aggregate: true)[
+#question(points: 20)[
   #question(inline: true)[
     Define the universe. Give three examples.
   ]
@@ -38,25 +38,26 @@
   ]
 ]
 
-#pagebreak()
+= Look look look its kinda cool the (un)set function works
+
 #examst-set()
 
-#question(points: (points: 10), aggregate: true)[
+#question(points: 10, aggregate: true)[
   Why is there air?
 ]
 
 #question(aggregate: false)[
  What if there were no air? 
-  #question(points: (points: 5))[
+  #question(points: 10)[
     Describe the effect on the balloon industry.
   ]
   
-  #question(points: (points: 5))[
+  #question(points: 5)[
     Describe the effect on the aircraft industry.
   ]
 ]
 
-#question(points: (points: 20), aggregate: true)[
+#question(points: 20, aggregate: true)[
   #question(inline: true)[
     Define the universe. Give three examples.
   ]

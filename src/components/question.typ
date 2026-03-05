@@ -73,8 +73,9 @@
   inline: false,
   body
 ) = context {
-  let wrapper = if inline {
-    it => { h(1em); box(it) }
+  // TODO: allow for customizing wrapper
+  let _wrapper = if inline {
+    it => { h(0.5em); box(it) }
   } else {
     block.with(inset: (left: 1em))
   }
@@ -84,7 +85,13 @@
   } else {
     render-question-counter
   }
-
+  
+  let _points = if type(points) == int or type(points) = float {
+    (points: points)
+  } else {
+    points
+  }
+  
   wrapper({
     state.question-depth.update(it => it + 1)
 
@@ -92,7 +99,7 @@
       #state.question-number.step(level: state.question-depth.get())
     ]
 
-    _q-start(points)
+    _q-start(_points)
 
     [
       #context[
