@@ -23,7 +23,11 @@
 
 #let _q-end-label-text() = strfmt(
   "q-end:{num}",
-  num: state.question-number.get().map(it => str(it)).join(".")
+  num: state.question-number
+  .get()
+  .slice(0, state.question-depth.get())
+  .map(it => str(it))
+  .join(".")
 )
 
 #let _q-end-label() = label(_q-end-label-text())
@@ -64,23 +68,23 @@
 #let question(
   // TODO: consider if this is good semantics
   render-question-counter: none,
-  points: (:), 
-  aggregate: false, 
-  inline: false, 
+  points: (:),
+  aggregate: false,
+  inline: false,
   body
 ) = context {
-  let wrapper = if inline { 
-    it => { h(1em); box(it) } 
-  } else { 
-    block.with(inset: (left: 1em)) 
+  let wrapper = if inline {
+    it => { h(1em); box(it) }
+  } else {
+    block.with(inset: (left: 1em))
   }
-  
+
   let _render-counter =  if render-question-counter == none {
     state.render.get().render-question-counter
   } else {
     render-question-counter
   }
-  
+
   wrapper({
     state.question-depth.update(it => it + 1)
 
@@ -105,7 +109,7 @@
         #if point-texts.len() > 0 [
           (#point-texts.join(", "))
         ]
-      ] 
+      ]
       #body
     ]
 
