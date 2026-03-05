@@ -1,17 +1,39 @@
 #import "../src/lib.typ": *
 
-#question(points: (points: 3), aggregate: true)[
-  BODY 1
+#examst-set(
+  render-question-counter: it => [
+    #let depth = it.get().len()
+    #let last = it.get().last()
+    #if depth == 1 {
+      numbering("1.", last)
+      h(3pt)
+    } else if depth == 2 {
+      numbering("(a)", last)
+      h(3pt)
+    }
+  ],
+)
 
+#question(points: (points: 10), aggregate: true)[
+  Why is there air?
+]
 
-  #question(points: (points: 3, tream: 1))[
-    BODY 2 (nested)
-    #question(points: (points: 7, tream: 2, pream: 6))[
-      BODY 3 (nested)
-    ]
+#question(aggregate: false)[
+ What if there were no air? 
+  #question(points: (points: 5))[
+    Describe the effect on the balloon industry.
+  ]
+  
+  #question(points: (points: 5))[
+    Describe the effect on the aircraft industry.
   ]
 ]
 
-#question(points: (points: 2, bonus: 5))[
-  BODY 3 
+#question(points: (points: 20), aggregate: true)[
+  #question(inline: true)[
+    Define the universe. Give three examples.
+  ]
+  #question()[
+    If the universe were to end, how would you know?
+  ]
 ]

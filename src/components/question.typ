@@ -61,8 +61,26 @@
   }
 )
 
-#let question(points: (:), aggregate: false, inline: false, body) = {
-  let wrapper = if inline { box } else { block.with(inset: (left: 1em)) }
+#let question(
+  // TODO: consider if this is good semantics
+  render-question-counter: none,
+  points: (:), 
+  aggregate: false, 
+  inline: false, 
+  body
+) = context {
+  let wrapper = if inline { 
+    it => { h(1em); box(it) } 
+  } else { 
+    block.with(inset: (left: 1em)) 
+  }
+  
+  let _render-counter =  if render-question-counter == none {
+    state.render.get().render-question-counter
+  } else {
+    render-question-counter
+  }
+  
   wrapper({
     state.question-depth.update(it => it + 1)
 
@@ -79,12 +97,15 @@
         } else {
           if next-q-start-label() != none { next-q-start-label() } else { _q-end-label() }
         }
-        Q#state.question-number.display()
-        (#points-between(
+        #_render-counter(state.question-number)
+        #let point-texts = points-between(
           _q-start-label(),
           _points-end-label,
-        ).pairs().map(((k, v)) => [#v #k]).join(", "))
-      ]
+        ).pairs().map(((k, v)) => [#v #k])
+        #if point-texts.len() > 0 [
+          (#point-texts.join(", "))
+        ]
+      ] 
       #body
     ]
 
