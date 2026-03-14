@@ -30,7 +30,7 @@
 ]
 
 #question()[
-  #question(inline: true)[
+  #question(points: 3, inline: true, points-position: "right-margin")[
     Define the universe. Give three examples.
   ]
   #question()[

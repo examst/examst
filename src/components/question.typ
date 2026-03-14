@@ -87,7 +87,7 @@
 ) = context {
   // TODO: allow for customizing wrapper
   let _wrapper = if inline {
-    it => { box(it) }
+    box.with(width: 1fr)
   } else {
     block.with(inset: (left: 1em), width: 100%)
   }
