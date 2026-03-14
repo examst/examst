@@ -1,6 +1,11 @@
 #import "@preview/oxifmt:1.0.0": strfmt
 #import "../state.typ" as state
 
+#let _default-render-points(points-dict) = {
+  let point-texts = points-dict.pairs().map(((k, v)) => [#v #k])
+  if point-texts.len() > 0 [(#point-texts.join(", "))]
+}
+
 #let next-q-start-label() = {
   let labels = query(selector(metadata)
     .after(here()))
@@ -65,9 +70,16 @@
   }
 )
 
+// TODO: design consideration, should we do it like this or should it be like a grid where
+// ------------------------------------------
+// | Qnumber | content                      |
+// ------------------------------------------
+//           ^ align this to margin
 #let question(
   // TODO: consider if this is good semantics
   render-question-counter: none,
+  render-points: none,
+  points-position: none,
   points: (:),
   aggregate: false,
   inline: false,
@@ -75,9 +87,9 @@
 ) = context {
   // TODO: allow for customizing wrapper
   let _wrapper = if inline {
-    it => { h(0.5em); box(it) }
+    it => { box(it) }
   } else {
-    block.with(inset: (left: 1em))
+    block.with(inset: (left: 1em), width: 100%)
   }
 
   let _render-counter =  if render-question-counter == none {
@@ -85,14 +97,26 @@
   } else {
     render-question-counter
   }
-  
-  let _points = if type(points) == int or type(points) = float {
+
+  let _render-pts = if render-points == none {
+    state.render.get().at("render-points", default: _default-render-points)
+  } else {
+    render-points
+  }
+
+  let _pts-position = if points-position == none {
+    state.render.get().at("points-position", default: "inline")
+  } else {
+    points-position
+  }
+
+  let _points = if type(points) == int or type(points) == float {
     (points: points)
   } else {
     points
   }
-  
-  wrapper({
+
+  _wrapper({
     state.question-depth.update(it => it + 1)
 
     context [
@@ -101,23 +125,44 @@
 
     _q-start(_points)
 
-    [
-      #context[
-        #let _points-end-label = if aggregate {
-          _q-end-label()
-        } else {
-          if next-q-start-label() != none { next-q-start-label() } else { _q-end-label() }
-        }
-        #_render-counter(state.question-number)
-        #let point-texts = points-between(
-          _q-start-label(),
-          _points-end-label,
-        ).pairs().map(((k, v)) => [#v #k])
-        #if point-texts.len() > 0 [
-          (#point-texts.join(", "))
-        ]
-      ]
+    // Compute the rendered points content
+    let _pts-content = context {
+      let _points-end-label = if aggregate {
+        _q-end-label()
+      } else {
+        if next-q-start-label() != none { next-q-start-label() } else { _q-end-label() }
+      }
+      let _pts = points-between(
+        _q-start-label(),
+        _points-end-label,
+      )
+      _render-pts(_pts)
+    }
+
+    // Arrange counter, points, and body based on points-position
+    if _pts-position == "before-counter" [
+      #context[#_pts-content]
+      #context[#_render-counter(state.question-number)]
       #body
+    ] else if _pts-position == "after-body" [
+      #context[#_render-counter(state.question-number)]
+      #body
+      #context[#_pts-content]
+    ] else if _pts-position == "left-margin" [
+      #context { place(left, dx: -6em - 1em * state.question-depth.get(), box(width: 4.5em, align(right, _pts-content))) }
+      #context[#_render-counter(state.question-number)]
+      #body
+    ] else if _pts-position == "right-margin" [
+      #context { place(right, dx: 5em, box(width: 4.5em, align(left, _pts-content))) }
+      #context[#_render-counter(state.question-number)]
+      #body
+    ] else if _pts-position == "inline" [
+      #context[#_render-counter(state.question-number)]
+      #context[#_pts-content]
+      #body
+    ] else if type(_pts-position) == function [
+      #context[#_pts-position(pts-content)]
+      #context[#_render-counter(state.question-number)]
     ]
 
     _q-end()
