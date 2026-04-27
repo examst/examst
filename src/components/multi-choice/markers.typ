@@ -11,11 +11,11 @@
 
 /// Bubble with letter label inside
 #let _bubble-letter(label-content, is-correct, is-bad, show-answers) = {
-  let fill = if show-answers and is-correct { black } else { white }
+  let fill = if show-answers and is-correct { black.lighten(30%) } else { white }
   let text-fill = if show-answers and is-correct { white } else { black }
   circle(radius: _marker-size / 2, fill: fill, stroke: black)[
     #set align(center + horizon)
-    #set text(size: _marker-size - 2pt, weight: "bold", fill: text-fill)
+    #set text(size: _marker-size - 2pt, weight: "medium", fill: text-fill)
     #label-content
   ]
 }
@@ -32,7 +32,7 @@
   let text-fill = if show-answers and is-correct { white } else { black }
   square(size: _marker-size, fill: fill, stroke: black)[
     #set align(center + horizon)
-    #set text(size: _marker-size - 2pt, weight: "bold", fill: text-fill)
+    #set text(size: _marker-size - 2pt, weight: "medium", fill: text-fill)
     #label-content
   ]
 }

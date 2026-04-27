@@ -46,3 +46,17 @@ description = "Default numbering pattern for multi-choice labels."
 default = '"A"'
 types = ["str"]
 function = false
+
+[multi-choice-correct-emphasis]
+title = "Multi-Choice Correct Emphasis"
+description = "Function applied to correct answer text when show-answers is true."
+default = "text.with(weight: \"bold\")"
+types = ["function"]
+function = false
+
+[multi-choice-marker-font]
+title = "Multi-Choice Marker Font"
+description = "Font used for the letter inside bubble-letter / checkbox-letter markers. none = use document font."
+default = "none"
+types = ["str", "array", "type(none)"]
+function = false

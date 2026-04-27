@@ -12,11 +12,16 @@
 // ── Internals ──────────────────────────────────────────────────────
 
 /// Resolves the parts of a single choice (marker content + body content).
-#let _resolve-choice(item, index, label-fmt, marker-fn, show-answers) = {
+#let _resolve-choice(item, index, label-fmt, marker-fn, marker-font, correct-emphasis, show-answers) = {
   let is-correct = type(item) == dictionary and item.at("kind", default: none) == "correct"
   let is-bad = type(item) == dictionary and item.at("kind", default: none) == "bad"
   let body = if type(item) == dictionary { item.body } else { item }
   let label-content = numbering(label-fmt, index + 1)
+
+  // Apply marker font if specified (none = inherit document font)
+  if marker-font != none {
+    label-content = text(font: marker-font, label-content)
+  }
 
   // Render the marker, then overlay scribble marks for bad choices
   let marker = marker-fn(label-content, is-correct, is-bad, show-answers)
@@ -24,9 +29,9 @@
     marker = bad-overlay(marker)
   }
 
-  // Bold the body text for correct answers when showing answers
+  // Emphasise correct answer text when showing answers
   let rendered-body = if show-answers and is-correct {
-    text(weight: "bold", body)
+    correct-emphasis(body)
   } else {
     body
   }
@@ -35,8 +40,8 @@
 }
 
 /// Renders a single choice as a block-level grid row.
-#let _render-choice-block(item, index, label-fmt, marker-fn, show-answers, choice-align) = {
-  let c = _resolve-choice(item, index, label-fmt, marker-fn, show-answers)
+#let _render-choice-block(item, index, label-fmt, marker-fn, marker-font, correct-emphasis, show-answers, choice-align) = {
+  let c = _resolve-choice(item, index, label-fmt, marker-fn, marker-font, correct-emphasis, show-answers)
   grid(
     columns: 3,
     column-gutter: 5pt,
@@ -46,8 +51,8 @@
 }
 
 /// Renders a single choice as inline content.
-#let _render-choice-inline(item, index, label-fmt, marker-fn, show-answers) = {
-  let c = _resolve-choice(item, index, label-fmt, marker-fn, show-answers)
+#let _render-choice-inline(item, index, label-fmt, marker-fn, marker-font, correct-emphasis, show-answers) = {
+  let c = _resolve-choice(item, index, label-fmt, marker-fn, marker-font, correct-emphasis, show-answers)
   box(height: 0em,  baseline: -0.3em, inset: (x: 0.25em), stroke: 1pt, 
     align(horizon, stack(dir: ltr, spacing: 0.35em, c.marker, c.body))
   )
@@ -78,6 +83,8 @@
   columns: __examst-default,
   marker: __examst-default,
   label: __examst-default,
+  marker-font: __examst-default,
+  correct-emphasis: __examst-default,
   none-above: none,
   choice-align: top,
   ..choices,
@@ -85,6 +92,8 @@
   let _columns = arg-or-default(columns, "multi-choice-columns")
   let _marker = arg-or-default(marker, "multi-choice-marker")
   let _label = arg-or-default(label, "multi-choice-label")
+  let _marker-font = arg-or-default(marker-font, "multi-choice-marker-font")
+  let _correct-emphasis = arg-or-default(correct-emphasis, "multi-choice-correct-emphasis")
   let _show-answers = (__examst-args.at("show-answers").get-raw)()
 
   // Resolve marker preset
@@ -117,19 +126,19 @@
   if _columns == none {
     // Inline/wrapping
     let rendered = items.enumerate().map(((i, item)) =>
-      _render-choice-inline(item, i, _label, _marker-fn, _show-answers)
+      _render-choice-inline(item, i, _label, _marker-fn, _marker-font, _correct-emphasis, _show-answers)
     )
     rendered.join(h(1em))
   } else if _columns == 1 {
     let rendered = items.enumerate().map(((i, item)) =>
-      _render-choice-block(item, i, _label, _marker-fn, _show-answers, choice-align)
+      _render-choice-block(item, i, _label, _marker-fn, _marker-font, _correct-emphasis, _show-answers, choice-align)
     )
     // Vertical stack
     stack(dir: ttb, spacing: 0.5em, ..rendered)
   } else {
     // Grid (row-major)
     let rendered = items.enumerate().map(((i, item)) =>
-      _render-choice-block(item, i, _label, _marker-fn, _show-answers, choice-align)
+      _render-choice-block(item, i, _label, _marker-fn, _marker-font, _correct-emphasis, _show-answers, choice-align)
     )
     grid(
       columns: _columns,
