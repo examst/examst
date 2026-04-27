@@ -27,5 +27,5 @@ function = false
 title = "Points Position"
 description = "Where points are displayed in the question layout. Options: inline, before-counter, after-body, left-margin, right-margin, or a custom function."
 default = '"inline"'
-types = ["str", "function"]
+types = ["str:inline", "str:before-counter", "str:after-body", "str:left-margin", "str:right-margin", "function"]
 function = false

@@ -1,29 +1,75 @@
-/// Checks if a value's type is in the allowed types list.
-/// Returns a closure (value-type, use) => bool.
-#let check-type(tys, allow-func) = {
+/// Parses a type spec string into a structured dictionary.
+/// - Plain type: `"str"` -> `(kind: "type", ty: str)`
+/// - Literal refinement: `"str:inline"` -> `(kind: "literal", ty: str, value: "inline")`
+#let parse-type-spec(spec-str) = {
+  if type(spec-str) == str and spec-str.contains(":") {
+    let idx = spec-str.position(":")
+    let ty-str = spec-str.slice(0, idx)
+    let literal = spec-str.slice(idx + 1)
+    let ty = eval(ty-str, mode: "code")
+    if ty == none { ty = type(none) }
+    (kind: "literal", ty: ty, value: literal)
+  } else {
+    let ty = if type(spec-str) == str {
+      eval(spec-str, mode: "code")
+    } else {
+      spec-str
+    }
+    if ty == none { ty = type(none) }
+    (kind: "type", ty: ty)
+  }
+}
+
+/// Checks if a value matches any of the parsed type specs.
+/// Returns a closure (value, use) => bool.
+/// - `specs`: array of parsed type spec dicts
+/// - `allow-func`: if true, also accept function values at set time (not use time)
+#let check-type(specs, allow-func) = {
   assert(
-    type(tys) == array,
-    message: "examst (internal): an argument's type must be specified as an array",
+    type(specs) == array,
+    message: "examst (internal): an argument's type specs must be specified as an array",
   )
 
-  (value-ty, use) => {
-    value-ty in tys or (allow-func and (not use) and value-ty == function)
+  (value, use) => {
+    for spec in specs {
+      if spec.kind == "literal" {
+        if type(value) == spec.ty and str(value) == spec.value {
+          return true
+        }
+      } else {
+        if type(value) == spec.ty {
+          return true
+        }
+      }
+    }
+    if allow-func and (not use) and type(value) == function {
+      return true
+    }
+    false
   }
 }
 
 /// Generates a human-readable string of allowed types for error messages.
 /// Returns a closure (use) => str.
-#let get-type-str(tys, allow-func) = {
+#let get-type-str(specs, allow-func) = {
   assert(
-    type(tys) == array,
-    message: "examst (internal): an argument's type must be specified as an array",
+    type(specs) == array,
+    message: "examst (internal): an argument's type specs must be specified as an array",
   )
+
+  let parts = specs.map(spec => {
+    if spec.kind == "literal" {
+      "\"" + spec.value + "\" (" + str(spec.ty) + ")"
+    } else {
+      str(spec.ty)
+    }
+  })
 
   (use) => {
     if allow-func and (not use) {
-      "either a " + tys.map(str).join(", a ") + ", or a function that returns one of the previous types"
+      "one of: " + parts.join(", ") + ", or a function that returns one of the previous"
     } else {
-      "either a " + tys.map(str).join(", a ", last: ", or a ")
+      "one of: " + parts.join(", ")
     }
   }
 }
@@ -48,8 +94,8 @@
     },
     update: (value) => {
       assert(
-        checker(type(value), false),
-        message: "examst: `" + name + "` must be " + type-str-fn(false) + ", found: " + str(type(value)),
+        checker(value, false),
+        message: "examst: `" + name + "` must be " + type-str-fn(false) + ", found: " + repr(value),
       )
       st.update((_) => value)
     },
@@ -59,8 +105,8 @@
       }
 
       assert(
-        checker(type(value), true),
-        message: "examst: `" + name + "` must be " + type-str-fn(true) + ", found: " + str(type(value)),
+        checker(value, true),
+        message: "examst: `" + name + "` must be " + type-str-fn(true) + ", found: " + repr(value),
       )
 
       value
@@ -78,16 +124,10 @@
   let out = (:)
   let args = toml("args.toml")
   for (key, arg) in args {
-    let tys = arg.types.map(t => {
-      let t = eval(t, mode: "code")
-      if t == none {
-        type(none)
-      } else {
-        t
-      }
-    })
+    let specs = arg.types.map(parse-type-spec)
 
-    if arg.function and function in tys {
+    let has-function-type = specs.any(s => s.kind == "type" and s.ty == function)
+    if arg.function and has-function-type {
       panic("examst (internal): `function` is not a valid type for an argument")
     }
 
@@ -95,8 +135,8 @@
       key,
       typed-state(
         key,
-        check-type(tys, arg.function),
-        get-type-str(tys, arg.function),
+        check-type(specs, arg.function),
+        get-type-str(specs, arg.function),
         eval(arg.default, mode: "code"),
         arg.function,
       ),
