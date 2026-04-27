@@ -23,5 +23,26 @@ function = false
 title = "Points Position"
 description = "Where points are displayed in the question layout. Options: inline, before-counter, after-body, left-margin, right-margin, or a custom function."
 default = '"inline"'
-types = ["str:inline", "str:before-counter", "str:after-body", "str:left-margin", "str:right-margin", "str:two-sided", "str:two-sided-reversed" "function"]
+types = ["str:inline", "str:before-counter", "str:after-body", "str:left-margin", "str:right-margin", "str:two-sided", "str:two-sided-reversed", "function"]
+function = false
+
+[multi-choice-columns]
+title = "Multi-Choice Columns"
+description = "Default column count for multi-choice layouts. 1 = vertical, none = inline/wrapping, >1 = grid."
+default = "1"
+types = ["int", "type(none)"]
+function = false
+
+[multi-choice-marker]
+title = "Multi-Choice Marker"
+description = "Default marker style for multi-choice items."
+default = '"bubble"'
+types = ["str:bubble", "str:bubble-letter", "str:checkbox", "str:checkbox-letter", "str:none", "function"]
+function = false
+
+[multi-choice-label]
+title = "Multi-Choice Label"
+description = "Default numbering pattern for multi-choice labels."
+default = '"A"'
+types = ["str"]
 function = false

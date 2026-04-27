@@ -1,5 +1,5 @@
 #import "../state.typ" as state
-#import "../config/args.typ": __examst-args, arg-or-default
+#import "../config/args.typ": __examst-args, __examst-default, arg-or-default
 #import "question/labels.typ": *
 #import "question/render-points.typ": *
 #import "question/points-position.typ": *
@@ -11,9 +11,9 @@
 //           ^ align this to margin
 #let question(
   // TODO: consider if this is good semantics
-  render-question-counter: none,
-  render-points: none,
-  points-position: none,
+  render-question-counter: __examst-default,
+  render-points: __examst-default,
+  points-position: __examst-default,
   points: (:),
   aggregate: false,
   inline: false,
