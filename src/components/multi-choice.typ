@@ -48,7 +48,9 @@
 /// Renders a single choice as inline content.
 #let _render-choice-inline(item, index, label-fmt, marker-fn, show-answers) = {
   let c = _resolve-choice(item, index, label-fmt, marker-fn, show-answers)
-  [#h(6pt)#box(baseline: 15%, c.marker)#h(3pt)#c.body]
+  box(height: 0em,  baseline: -0.3em, inset: (x: 0.25em), stroke: 1pt, 
+    align(horizon, stack(dir: ltr, spacing: 0.35em, c.marker, c.body))
+  )
 }
 
 // ── Public API ─────────────────────────────────────────────────────
