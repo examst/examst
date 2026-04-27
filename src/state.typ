@@ -12,5 +12,4 @@
 /// )
 #let questions = state("questions", ())
 
-/// Tracks rendering functions for displaying certain components of the exam
-#let render = state("render", (:))
+

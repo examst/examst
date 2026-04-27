@@ -21,7 +21,7 @@
 #question(aggregate: false)[
  What if there were no air?
   #question(points: 5)[
-    Describe the effect on the balloon industry.
+    Describe the effect on the balloon industry. 
   ]
 
   #question(points: 5)[
@@ -40,7 +40,7 @@
 
 = Look look look its kinda cool the (un)set function works
 
-#examst-set()
+#examst-reset()
 
 #question(points: 10, aggregate: true)[
   Why is there air?
@@ -68,6 +68,7 @@
 
 = Custom render-points: bracketed
 
+#examst-reset()
 #examst-set(
   render-question-counter: it => [
     #let depth = it.get().len()

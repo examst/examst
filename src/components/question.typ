@@ -1,10 +1,6 @@
 #import "@preview/oxifmt:1.0.0": strfmt
 #import "../state.typ" as state
-
-#let _default-render-points(points-dict) = {
-  let point-texts = points-dict.pairs().map(((k, v)) => [#v #k])
-  if point-texts.len() > 0 [(#point-texts.join(", "))]
-}
+#import "../config/args.typ": __examst-args
 
 #let next-q-start-label() = {
   let labels = query(selector(metadata)
@@ -92,20 +88,20 @@
     block.with(inset: (left: 1em), width: 100%)
   }
 
-  let _render-counter =  if render-question-counter == none {
-    state.render.get().render-question-counter
+  let _render-counter = if render-question-counter == none {
+    (__examst-args.at("render-question-counter").get-raw)()
   } else {
     render-question-counter
   }
 
   let _render-pts = if render-points == none {
-    state.render.get().at("render-points", default: _default-render-points)
+    (__examst-args.at("render-points").get-raw)()
   } else {
     render-points
   }
 
   let _pts-position = if points-position == none {
-    state.render.get().at("points-position", default: "inline")
+    (__examst-args.at("points-position").get-raw)()
   } else {
     points-position
   }
