@@ -65,7 +65,7 @@
     }
   })
 
-  (use) => {
+  use => {
     if allow-func and (not use) {
       "one of: " + parts.join(", ") + ", or a function that returns one of the previous"
     } else {
@@ -86,20 +86,20 @@
   let st = state("examst:" + name, default)
 
   (
-    set-raw: (value) => {
-      st.update((_) => value)
+    set-raw: value => {
+      st.update(_ => value)
     },
     get-raw: () => {
       st.get()
     },
-    update: (value) => {
+    update: value => {
       assert(
         checker(value, false),
         message: "examst: `" + name + "` must be " + type-str-fn(false) + ", found: " + repr(value),
       )
-      st.update((_) => value)
+      st.update(_ => value)
     },
-    type-check: (value) => {
+    type-check: value => {
       if allow-func and type(value) == function {
         value = value()
       }
@@ -112,7 +112,7 @@
       value
     },
     reset: () => {
-      st.update((_) => default)
+      st.update(_ => default)
     },
     default: default,
   )
@@ -164,5 +164,15 @@
 #let __examst-load(stored) = {
   for (key, value) in __examst-args {
     (value.set-raw)(stored.at(key))
+  }
+}
+
+/// Identity function if arg is not none, otherwise grabs a sensible default
+/// from the examst arguments
+#let arg-or-default(arg, key) = {
+  if arg == none {
+    (__examst-args.at(key).get-raw)()
+  } else {
+    arg
   }
 }

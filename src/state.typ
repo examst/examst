@@ -12,4 +12,9 @@
 /// )
 #let questions = state("questions", ())
 
+/// Determines whether or not to show the answers
+#let print-answers = state("print-answers", false)
 
+/// Selects a display mode
+/// Valid options: display, screen
+#let display = state("display", "print")

@@ -79,10 +79,7 @@
       numbering("(a)", last)
     }
   ],
-  render-points: points-dict => {
-    let point-texts = points-dict.pairs().map(((k, v)) => [#v #k])
-    if point-texts.len() > 0 [\[#point-texts.join(", ")\]]
-  },
+  render-points: "bracketed",
 )
 
 #question(points: 10, aggregate: true)[
@@ -202,7 +199,8 @@
       numbering("(a)", last)
     }
   ],
-  points-position: "right-margin",
+  render-points: "boxed",
+  points-position: "two-sided",
 )
 
 #question(points: 10, aggregate: true)[
@@ -211,11 +209,19 @@
 
 #question(aggregate: false)[
  What if there were no air?
-  #question(points: 5)[
+  #question(points: 50)[
     Describe the effect on the balloon industry.
   ]
 
   #question(points: 5)[
     Describe the effect on the aircraft industry.
   ]
+]
+
+#grid(
+  rows: (1in, 1in)
+)[
+  asdf
+][
+  asdf
 ]

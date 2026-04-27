@@ -14,18 +14,14 @@ function = false
 
 [render-points]
 title = "Render Points"
-description = "How points are formatted. Takes a dictionary mapping point category names to their values, returns content."
-default = '''
-(points-dict) => {
-  let point-texts = points-dict.pairs().map(((k, v)) => [#v #k])
-  if point-texts.len() > 0 [(#point-texts.join(", "))]
-}'''
-types = ["function"]
+description = "How points are formatted. Either a preset name or a function taking a points dictionary."
+default = '"parenthesized"'
+types = ["str:parenthesized", "str:boxed", "str:bracketed", "function"]
 function = false
 
 [points-position]
 title = "Points Position"
 description = "Where points are displayed in the question layout. Options: inline, before-counter, after-body, left-margin, right-margin, or a custom function."
 default = '"inline"'
-types = ["str:inline", "str:before-counter", "str:after-body", "str:left-margin", "str:right-margin", "function"]
+types = ["str:inline", "str:before-counter", "str:after-body", "str:left-margin", "str:right-margin", "str:two-sided", "str:two-sided-reversed" "function"]
 function = false
