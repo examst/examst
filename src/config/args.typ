@@ -180,3 +180,23 @@
     (__examst-args.at(key).type-check)(arg)
   }
 }
+
+/// Helpers for interacting with showing answers
+
+/// Setters for showing and hiding answers
+#let show-answers() = (__examst-args.at("show-answers").update)(true)
+#let hide-answers() = (__examst-args.at("show-answers").update)(false)
+
+/// Getter for the value of show-answers
+#let is-show-answers = (__examst-args.at("show-answers").get-raw)
+
+/// Conditionally render based off of answer state
+#let if-print-answers(body, other) = context {
+  if (__examst-args.at("show-answers").get-raw)() {
+    body
+  } else {
+    other
+  }
+}
+
+#let if-not-print-answers(body, other) = if-print-answers(other, body)

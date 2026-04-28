@@ -60,3 +60,10 @@ description = "Font used for the letter inside bubble-letter / checkbox-letter m
 default = "none"
 types = ["str", "array", "type(none)"]
 function = false
+
+[fill-in-width]
+title = "Fill in the blank line width"
+description = "Width used for fill in the blank lines."
+default = "auto"
+types = ["type(auto)", "length", "function"]
+function = false

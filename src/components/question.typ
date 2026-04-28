@@ -60,10 +60,10 @@
   }
 
   _wrapper({
-    state.question-depth.update(it => it + 1)
+    state._question-depth.update(it => it + 1)
 
     context [
-      #state.question-number.step(level: state.question-depth.get())
+      #state._question-number.step(level: state._question-depth.get())
     ]
 
     _q-start(_points)
@@ -82,15 +82,15 @@
       _render-pts(_pts)
     }
 
-    let _counter-content = context[#_render-counter(state.question-number)]
-    let _depth = state.question-depth.get()
+    let _counter-content = context[#_render-counter(state._question-number)]
+    let _depth = state._question-depth.get()
 
     _pts-position(_pts-content, _counter-content, body, _depth)
 
     _q-end()
 
     context[
-      #state.question-depth.update(it => it - 1)
+      #state._question-depth.update(it => it - 1)
     ]
   })
 }
