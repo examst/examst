@@ -218,10 +218,95 @@
   ]
 ]
 
-#grid(
-  rows: (1in, 1in)
-)[
-  asdf
-][
-  asdf
+= Multi-choice examples
+
+== Vertical (default)
+
+#question(points: 5)[
+  What is the capital of France?
+  #multi-choice(
+    [London],
+    [Berlin],
+    correct[Paris],
+    [Madrid],
+  )
 ]
+
+== With bubble-letter markers
+
+#question(points: 5)[
+  Which planet is closest to the sun?
+  #multi-choice(
+    marker: "bubble-letter",
+    correct[Mercury],
+    [Venus],
+    [Earth],
+    [Mars],
+  )
+]
+
+== Two-column grid
+
+#question(points: 5)[
+  Which of these are prime numbers?
+  #select-many(
+    columns: 2,
+    marker: "checkbox-letter",
+    correct[7],
+    [8],
+    correct[11],
+    [12],
+    correct[13],
+    [15],
+  )
+]
+
+== Inline layout
+
+#question(points: 3)[
+  Is the earth flat?
+  #select-one(
+    marker: "checkbox-letter",
+    columns: none,
+    [Yes],
+    correct[No],
+  )
+]
+
+== None of the above (auto)
+
+#question(points: 5)[
+  Which of these animals can fly?
+  #multi-choice(
+    marker: "bubble-letter",
+    none-above: auto,
+    [Dog],
+    [Cat],
+    [Fish],
+  )
+]
+
+== Bad fill example
+
+#multi-choice(
+  marker: "bubble-letter",
+  bad[Filled like this],
+  correct[Filled like this],
+)
+
+== Show answers mode
+
+#examst-set(show-answers: true)
+
+#question(points: 5)[
+  What is 2 + 2?
+  #multi-choice(
+    marker: "bubble-letter",
+    [3],
+    correct[4],
+    [5],
+    [6],
+  )
+]
+
+#examst-reset()

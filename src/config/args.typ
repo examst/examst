@@ -167,12 +167,16 @@
   }
 }
 
-/// Identity function if arg is not none, otherwise grabs a sensible default
-/// from the examst arguments
+/// Opaque sentinel value — used as the default for function parameters so that
+/// `none`, `auto`, etc. remain available as real user-facing values.
+#let __examst-default = context [examst-default]
+
+/// Returns the local override if provided (after type-checking it against the
+/// same specs used by `examst-set`), otherwise the current global default.
 #let arg-or-default(arg, key) = {
-  if arg == none {
+  if arg == __examst-default {
     (__examst-args.at(key).get-raw)()
   } else {
-    arg
+    (__examst-args.at(key).type-check)(arg)
   }
 }
