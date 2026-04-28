@@ -1,0 +1,27 @@
+[show-answers]
+title = "Show Answers"
+description = "Whether or not to print answers."
+default = "false"
+types = ["bool"]
+function = false
+
+[render-question-counter]
+title = "Render Question Counter"
+description = "How the question counter is rendered. Takes the question-number counter."
+default = '(it) => [Q#it.display("1.1.")]'
+types = ["function"]
+function = false
+
+[render-points]
+title = "Render Points"
+description = "How points are formatted. Either a preset name or a function taking a points dictionary."
+default = '"parenthesized"'
+types = ["str:parenthesized", "str:boxed", "str:bracketed", "function"]
+function = false
+
+[points-position]
+title = "Points Position"
+description = "Where points are displayed in the question layout. Options: inline, before-counter, after-body, left-margin, right-margin, or a custom function."
+default = '"inline"'
+types = ["str:inline", "str:before-counter", "str:after-body", "str:left-margin", "str:right-margin", "str:two-sided", "str:two-sided-reversed" "function"]
+function = false

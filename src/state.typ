@@ -12,5 +12,9 @@
 /// )
 #let questions = state("questions", ())
 
-/// Tracks rendering functions for displaying certain components of the exam
-#let render = state("render", (:))
+/// Determines whether or not to show the answers
+#let print-answers = state("print-answers", false)
+
+/// Selects a display mode
+/// Valid options: display, screen
+#let display = state("display", "print")

@@ -1,74 +1,8 @@
-#import "@preview/oxifmt:1.0.0": strfmt
 #import "../state.typ" as state
-
-#let _default-render-points(points-dict) = {
-  let point-texts = points-dict.pairs().map(((k, v)) => [#v #k])
-  if point-texts.len() > 0 [(#point-texts.join(", "))]
-}
-
-#let next-q-start-label() = {
-  let labels = query(selector(metadata)
-    .after(here()))
-    .filter(it => {
-      (type(it.value) == str) and (it.value.starts-with("q-start"))
-    })
- if labels.len() > 0 {
-   return labels.first().label
- } else {
-   return none
- }
-}
-
-#let _q-start-label-text() = strfmt(
-  "q-start:{num}",
-  num: state.question-number.get().map(it => str(it)).join(".")
-)
-
-#let _q-start-label() = label(_q-start-label-text())
-
-#let _q-end-label-text() = strfmt(
-  "q-end:{num}",
-  num: state.question-number
-  .get()
-  .slice(0, state.question-depth.get())
-  .map(it => str(it))
-  .join(".")
-)
-
-#let _q-end-label() = label(_q-end-label-text())
-
-#let _q-start(points) = {
-  context [
-    #metadata(_q-start-label-text())
-    #_q-start-label()
-
-    #metadata(points)
-    #label("points")
-  ]
-}
-
-#let _q-end() = {
-  context [
-    #metadata(_q-end-label-text())
-    #_q-end-label()
-  ]
-}
-
-#let points-between(start-label, end-label) = query(
-  selector(<points>)
-  .after(start-label)
-  .before(end-label)
-).map(it => it.value).fold(
-  (:),
-  (acc, curr) => {
-    for (k, v) in curr {
-      acc.insert(
-        k, acc.at(k, default: 0) + v
-      )
-    }
-    return acc
-  }
-)
+#import "../config/args.typ": __examst-args, arg-or-default
+#import "question/labels.typ": *
+#import "question/render-points.typ": *
+#import "question/points-position.typ": *
 
 // TODO: design consideration, should we do it like this or should it be like a grid where
 // ------------------------------------------
@@ -91,25 +25,34 @@
   } else {
     block.with(inset: (left: 1em), width: 100%)
   }
-
-  let _render-counter =  if render-question-counter == none {
-    state.render.get().render-question-counter
+  
+  let _render-counter = arg-or-default(
+    render-question-counter, 
+    "render-question-counter"
+  )
+  
+  let _render-pts = arg-or-default(
+    render-points,
+    "render-points"
+  )
+  // Resolve preset name to function
+  let _render-pts = if type(_render-pts) == str {
+    render-points-configs.at(_render-pts)
   } else {
-    render-question-counter
+    _render-pts
   }
-
-  let _render-pts = if render-points == none {
-    state.render.get().at("render-points", default: _default-render-points)
+  
+  let _pts-position = arg-or-default(
+    points-position,
+    "points-position"
+  )
+  // Resolve preset name to function
+  let _pts-position = if type(_pts-position) == str {
+    points-position-configs.at(_pts-position)
   } else {
-    render-points
+    _pts-position
   }
-
-  let _pts-position = if points-position == none {
-    state.render.get().at("points-position", default: "inline")
-  } else {
-    points-position
-  }
-
+    
   let _points = if type(points) == int or type(points) == float {
     (points: points)
   } else {
@@ -139,31 +82,10 @@
       _render-pts(_pts)
     }
 
-    // Arrange counter, points, and body based on points-position
-    if _pts-position == "before-counter" [
-      #context[#_pts-content]
-      #context[#_render-counter(state.question-number)]
-      #body
-    ] else if _pts-position == "after-body" [
-      #context[#_render-counter(state.question-number)]
-      #body
-      #context[#_pts-content]
-    ] else if _pts-position == "left-margin" [
-      #context { place(left, dx: -6em - 1em * state.question-depth.get(), box(width: 4.5em, align(right, _pts-content))) }
-      #context[#_render-counter(state.question-number)]
-      #body
-    ] else if _pts-position == "right-margin" [
-      #context { place(right, dx: 5em, box(width: 4.5em, align(left, _pts-content))) }
-      #context[#_render-counter(state.question-number)]
-      #body
-    ] else if _pts-position == "inline" [
-      #context[#_render-counter(state.question-number)]
-      #context[#_pts-content]
-      #body
-    ] else if type(_pts-position) == function [
-      #context[#_pts-position(pts-content)]
-      #context[#_render-counter(state.question-number)]
-    ]
+    let _counter-content = context[#_render-counter(state.question-number)]
+    let _depth = state.question-depth.get()
+
+    _pts-position(_pts-content, _counter-content, body, _depth)
 
     _q-end()
 
