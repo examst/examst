@@ -16,16 +16,16 @@
 
 #let _q-start-label-text() = strfmt(
   "q-start:{num}",
-  num: state.question-number.get().map(it => str(it)).join(".")
+  num: state._question-number.get().map(it => str(it)).join(".")
 )
 
 #let _q-start-label() = label(_q-start-label-text())
 
 #let _q-end-label-text() = strfmt(
   "q-end:{num}",
-  num: state.question-number
+  num: state._question-number
   .get()
-  .slice(0, state.question-depth.get())
+  .slice(0, state._question-depth.get())
   .map(it => str(it))
   .join(".")
 )
