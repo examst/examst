@@ -180,3 +180,15 @@
     (__examst-args.at(key).type-check)(arg)
   }
 }
+
+/// Helpers for conditionally rendering based off of answer state
+#let if-print-answers(body, other) = context {
+  if (__examst-args.at("show-answers").get-raw)() {
+    body
+  } else {
+    other
+  }
+}
+
+#let if-not-print-answers(body, other) = if-print-answers(other, body)
+

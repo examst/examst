@@ -19,9 +19,9 @@
 ]
 
 #question(aggregate: false)[
- What if there were no air?
+  What if there were no air?
   #question(points: 5)[
-    Describe the effect on the balloon industry. 
+    Describe the effect on the balloon industry.
   ]
 
   #question(points: 5)[
@@ -47,7 +47,7 @@
 ]
 
 #question(aggregate: false)[
- What if there were no air?
+  What if there were no air?
   #question(points: 10)[
     Describe the effect on the balloon industry.
   ]
@@ -87,7 +87,7 @@
 ]
 
 #question(aggregate: false)[
- What if there were no air?
+  What if there were no air?
   #question(points: 5)[
     Describe the effect on the balloon industry.
   ]
@@ -117,7 +117,7 @@
 ]
 
 #question(aggregate: false)[
- What if there were no air?
+  What if there were no air?
   #question(points: 5)[
     Describe the effect on the balloon industry.
   ]
@@ -147,7 +147,7 @@
 ]
 
 #question(aggregate: false)[
- What if there were no air?
+  What if there were no air?
   #question(points: 5)[
     Describe the effect on the balloon industry.
   ]
@@ -177,7 +177,7 @@
 ]
 
 #question(aggregate: false)[
- What if there were no air?
+  What if there were no air?
   #question(points: 5)[
     Describe the effect on the balloon industry.
   ]
@@ -208,7 +208,7 @@
 ]
 
 #question(aggregate: false)[
- What if there were no air?
+  What if there were no air?
   #question(points: 50)[
     Describe the effect on the balloon industry.
   ]
@@ -299,7 +299,7 @@
 #examst-set(show-answers: true)
 
 #question(points: 5)[
-  What is 2 + 2?
+  What is 2 + 2? 
   #multi-choice(
     marker: "bubble-letter",
     [3],
