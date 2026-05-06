@@ -61,6 +61,48 @@ default = "none"
 types = ["str", "array", "type(none)"]
 function = false
 
+[solution-title]
+title = "Solution Title"
+description = "Content prepended to printed solutions. Set to none to disable."
+default = '[*Solution:* ]'
+types = ["content", "type(none)"]
+function = false
+
+[solution-emphasis]
+title = "Solution Emphasis"
+description = "Function applied to solution body text when printed."
+default = "(it) => it"
+types = ["function"]
+function = false
+
+[solution-frame]
+title = "Solution Frame"
+description = "How printed solutions are visually framed: boxed, shaded, or none."
+default = '"boxed"'
+types = ["str:boxed", "str:shaded", "str:none"]
+function = false
+
+[solution-shade-color]
+title = "Solution Shade Color"
+description = "Background color when solution-frame is shaded."
+default = "luma(95%)"
+types = ["color"]
+function = false
+
+[solution-box-color]
+title = "Solution Box Color"
+description = "Stroke color when solution-frame is boxed."
+default = "black"
+types = ["color"]
+function = false
+
+[cancel-space]
+title = "Cancel Space"
+description = "When true, suppresses answer spaces from solution environments globally."
+default = "false"
+types = ["bool"]
+function = false
+
 [fill-in-width]
 title = "Fill in the blank line width"
 description = "Width used for fill in the blank lines."
