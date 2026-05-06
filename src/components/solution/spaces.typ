@@ -10,7 +10,7 @@
   stroke: 0.5pt,
 ) = {
   block(width: 100%, height: height, breakable: false, {
-    let y = spacing / 2
+    let y = 2 * spacing  / 3
     while y < height {
       place(top, dy: y, line(length: 100%, stroke: stroke))
       y += spacing
