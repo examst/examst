@@ -1,45 +1,20 @@
 /// Framing logic for solution content.
-/// Wraps solution body in the chosen visual style.
+/// Preset configs and resolution for the `solution-frame` arg.
 
-/// Wraps solution content in the active frame style.
-///
-/// - `body`: the solution content
-/// - `style`: `"boxed"` | `"shaded"` | `"none"`
-/// - `title`: content prepended (e.g. [*Solution:*]), or none to skip
-/// - `emphasis`: function applied to the body text
-/// - `shade-color`: fill color for `"shaded"` style
-/// - `box-color`: stroke color for `"boxed"` style
-#let frame-solution(
-  body,
-  style,
-  title,
-  emphasis,
-  shade-color,
-  box-color,
-) = {
-  let styled = emphasis(body)
-  let titled = if title != none {
-    [#title #styled]
-  } else {
-    styled
-  }
+/// Preset frame styles mapping string keys to (content) -> content functions.
+#let solution-frame-configs = (
+  "boxed": (content) => block(width: 100%, inset: 8pt, stroke: black, content),
+  "shaded": (content) => block(width: 100%, inset: 8pt, fill: luma(95%), content),
+  "none": (content) => content,
+)
 
-  if style == "boxed" {
-    block(
-      width: 100%,
-      inset: 8pt,
-      stroke: box-color,
-      titled,
-    )
-  } else if style == "shaded" {
-    block(
-      width: 100%,
-      inset: 8pt,
-      fill: shade-color,
-      titled,
-    )
+/// Resolves a raw frame value (string/dict/function) into a (content) -> content function.
+#let resolve-frame(raw) = {
+  if type(raw) == str {
+    solution-frame-configs.at(raw)
+  } else if type(raw) == dictionary {
+    (content) => block(..raw, content)
   } else {
-    // "none" — no framing
-    titled
+    raw
   }
 }

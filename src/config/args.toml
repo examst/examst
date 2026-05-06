@@ -77,30 +77,23 @@ function = false
 
 [solution-frame]
 title = "Solution Frame"
-description = "How printed solutions are visually framed: boxed, shaded, or none."
+description = "How printed solutions are visually framed. Presets: boxed, shaded, none. Also accepts a dictionary of block() keys or a (content) -> content function."
 default = '"boxed"'
-types = ["str:boxed", "str:shaded", "str:none"]
+types = ["str:boxed", "str:shaded", "str:none", "dictionary", "function"]
 function = false
 
-[solution-shade-color]
-title = "Solution Shade Color"
-description = "Background color when solution-frame is shaded."
-default = "luma(95%)"
-types = ["color"]
+[solution-fill]
+title = "Solution Fill"
+description = "Default fill pattern for answer spaces. Presets: lines, grid, none. Also accepts a (height) -> content function."
+default = '"lines"'
+types = ["str:lines", "str:grid", "str:none", "function"]
 function = false
 
-[solution-box-color]
-title = "Solution Box Color"
-description = "Stroke color when solution-frame is boxed."
-default = "black"
-types = ["color"]
-function = false
-
-[cancel-space]
-title = "Cancel Space"
-description = "When true, suppresses answer spaces from solution environments globally."
-default = "false"
-types = ["bool"]
+[solution-height]
+title = "Solution Height"
+description = "Default height for answer spaces."
+default = "2in"
+types = ["length"]
 function = false
 
 [fill-in-width]

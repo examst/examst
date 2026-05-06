@@ -324,3 +324,68 @@
     }
   ],
 )
+
+== solution() — hidden: nothing, shown: framed
+
+#examst-set(show-answers: true)
+
+#question(points: 5)[
+  Why is the sky blue?
+  #solution[
+    Rayleigh scattering of sunlight by atmospheric molecules.
+  ]
+]
+
+#examst-set(show-answers: false)
+
+#question(points: 5)[
+  Why is the sky blue? (answers hidden — nothing below)
+  #solution[
+    Rayleigh scattering of sunlight by atmospheric molecules.
+  ]
+]
+
+== answer() — default lines fill
+
+#question(points: 10)[
+  Explain the water cycle.
+  #answer[
+    Evaporation, condensation, precipitation, collection.
+  ]
+]
+
+== answer() — grid fill
+
+#question(points: 10)[
+  Draw a diagram of a cell.
+  #answer(fill: "grid", height: 3in)[
+    A labeled diagram of an animal cell.
+  ]
+]
+
+== answer() — custom fill (blank box, replaces solution-box)
+
+#question(points: 5)[
+  Write your name.
+  #answer(fill: v, frame: (stroke: 0.5pt, width: 100%, inset: 8pt), height: 1in)[
+    Andrew
+  ]
+]
+
+== answer() — shown mode
+
+#examst-set(show-answers: true)
+
+#question(points: 10)[
+  Explain the water cycle.
+  #answer[
+    Evaporation, condensation, precipitation, collection.
+  ]
+]
+
+#examst-set(show-answers: false)
+
+== Standalone fill-lines / fill-grid
+
+#fill-lines(1.5in)
+#fill-grid(1.5in)
