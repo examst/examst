@@ -391,3 +391,7 @@
 #answer-space(fill: fill-grid.with(spacing: 0.45in), height: 1in)
 #answer-space(fill: "none", frame: "boxed")
 #answer-space(height: 1in, frame: "boxed")
+
+= Points table examples
+
+See `example/points-table.typ` for a standalone demo of all points-table features.
