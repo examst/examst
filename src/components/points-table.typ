@@ -4,7 +4,7 @@
 /// - `points-table`: renders a summary table showing points per question.
 
 #import "../state.typ" as state
-#import "../config/args.typ": __examst-args
+#import "../config/args.typ": __examst-args, is-show-answers
 #import "question/labels.typ": points-between
 
 // ── Query infrastructure ───────────────────────────────────────────
@@ -13,8 +13,9 @@
 /// components (e.g. depth 1 → "1", "2"; depth 2 → "1.1", "2.3").
 /// Returns array of (number: str, points: dict, depth: int).
 #let _collect-at-depth(target-depth) = {
-  let all-starts = query(selector(metadata))
-    .filter(it => type(it.value) == str and it.value.starts-with("q-start:"))
+  let all-starts = query(selector(metadata)).filter(it => (
+    type(it.value) == str and it.value.starts-with("q-start:")
+  ))
 
   all-starts
     .filter(it => {
@@ -62,9 +63,9 @@
 
 /// Resolve the display label for a column.
 #let _resolve-label(col, user-labels) = {
-  if col in user-labels { user-labels.at(col) }
-  else if col in _default-labels { _default-labels.at(col) }
-  else { upper(col.first()) + col.slice(1) } // capitalize
+  if col in user-labels { user-labels.at(col) } else if col in _default-labels {
+    _default-labels.at(col)
+  } else { upper(col.first()) + col.slice(1) } // capitalize
 }
 
 // ── Total computation ──────────────────────────────────────────────
@@ -136,7 +137,9 @@
     let children = children-at-depth.filter(q => q.number.starts-with(prefix))
 
     // Don't expand if children have no points of their own (aggregate parent)
-    let children-have-points = children.any(q => q.points.values().sum(default: 0) > 0)
+    let children-have-points = children.any(q => (
+      q.points.values().sum(default: 0) > 0
+    ))
 
     if children.len() == 0 or not children-have-points {
       // Leaf question — no expandable subparts
@@ -162,12 +165,20 @@
 
 // ── Vertical renderer ──────────────────────────────────────────────
 
-#let _render-vertical(rows, columns, categories, labels, totals, fill-scores, show-answers) = {
+#let _render-vertical(
+  rows,
+  columns,
+  categories,
+  labels,
+  totals,
+  fill-scores,
+  show-answers,
+) = {
   let n-cols = columns.len()
 
   // Header cells
-  let header-cells = columns.map(col =>
-    table.cell(/*fill: luma(230)*/)[*#_resolve-label(col, labels)*]
+  let header-cells = columns.map(
+    col => table.cell()[*#_resolve-label(col, labels)*],
   )
 
   // Data cells
@@ -242,7 +253,15 @@
 
 // ── Horizontal renderer ────────────────────────────────────────────
 
-#let _render-horizontal(rows, columns, categories, labels, totals, fill-scores, show-answers) = {
+#let _render-horizontal(
+  rows,
+  columns,
+  categories,
+  labels,
+  totals,
+  fill-scores,
+  show-answers,
+) = {
   // Each config "column" becomes a table row; each question becomes a table column.
   let has-total = totals != none
   let n-table-cols = rows.len() + 1 + if has-total { 1 } else { 0 }
@@ -250,7 +269,9 @@
   let all-cells = ()
   for col in columns {
     // Row header
-    all-cells.push(table.cell(/*fill: luma(230)*/)[*#_resolve-label(col, labels)*])
+    all-cells.push(
+      table.cell()[*#_resolve-label(col, labels)*],
+    )
 
     // Per-question cells
     for row in rows {
@@ -277,7 +298,9 @@
     // Total cell (only if totals provided)
     if has-total {
       if col == "question" {
-        all-cells.push(table.cell(/*fill: luma(230)*/)[*#_resolve-label("total", labels)*])
+        all-cells.push(
+          table.cell()[*#_resolve-label("total", labels)*],
+        )
       } else if col == "score" {
         all-cells.push(table.cell[])
       } else {
@@ -368,7 +391,7 @@
   let totals = _compute-totals(leaf-rows, categories, total)
 
   // 4. Get show-answers state
-  let show-ans = (__examst-args.at("show-answers").get-raw)()
+  let show-ans = is-show-answers()
 
   // 5. Custom renderer escape hatch
   if render != auto {
@@ -390,15 +413,25 @@
   // 7. Handle overflow splitting
   let groups = _split-rows(rows, max-per-group)
 
-  let tables = groups.enumerate().map(((i, group)) => {
-    // Only the last group shows the overall total; intermediate groups have no total row
-    let group-totals = if groups.len() > 1 and i < groups.len() - 1 {
-      none
-    } else {
-      totals
-    }
-    renderer(group, cols, categories, labels, group-totals, fill-scores, show-ans)
-  })
+  let tables = groups
+    .enumerate()
+    .map(((i, group)) => {
+      // Only the last group shows the overall total; intermediate groups have no total row
+      let group-totals = if groups.len() > 1 and i < groups.len() - 1 {
+        none
+      } else {
+        totals
+      }
+      renderer(
+        group,
+        cols,
+        categories,
+        labels,
+        group-totals,
+        fill-scores,
+        show-ans,
+      )
+    })
 
   if tables.len() == 1 {
     tables.first()

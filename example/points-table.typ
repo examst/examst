@@ -2,17 +2,17 @@
 
 #set page(paper: "us-letter")
 
-#examst-set(
-  render-question-counter: it => [
-    #let depth = it.get().len()
-    #let last = it.get().last()
-    #if depth == 1 {
-      numbering("1.", last)
-    } else if depth == 2 {
-      numbering("(a)", last)
-    }
-  ],
-)
+#let question-counter = it => [
+  #let depth = it.get().len()
+  #let last = it.get().last()
+  #if depth == 1 {
+    numbering("1.", last)
+  } else if depth == 2 {
+    numbering("(a)", last)
+  }
+]
+
+#examst-set(render-question-counter: question-counter)
 
 // ── Define questions ───────────────────────────────────────────────
 

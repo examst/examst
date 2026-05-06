@@ -5,8 +5,10 @@
 /// - `answer`: renders fill inside frame when hidden, solution inside frame when shown.
 ///   (Replaces the old solution-box — use `answer(fill: v)` for an empty box.)
 
-#import "../config/args.typ": __examst-args, __examst-default, arg-or-default
-#import "solution/spaces.typ": fill-lines, fill-grid, resolve-fill
+#import "../config/args.typ": (
+  __examst-args, __examst-default, arg-or-default, is-show-answers,
+)
+#import "solution/spaces.typ": fill-grid, fill-lines, resolve-fill
 #import "solution/frame.typ": resolve-frame
 
 // ── Primary API ──────────────────────────────────────────────────
@@ -46,7 +48,7 @@
   frame: __examst-default,
   body,
 ) = context {
-  let _show = (__examst-args.at("show-answers").get-raw)()
+  let _show = is-show-answers()
   if not _show { return }
 
   let _title = arg-or-default(title, "solution-title")
@@ -86,7 +88,7 @@
   sol-height: none,
   body,
 ) = context {
-  let _show = (__examst-args.at("show-answers").get-raw)()
+  let _show = is-show-answers()
   let _height = arg-or-default(height, "solution-height")
   let _raw-fill = arg-or-default(fill, "solution-fill")
   let _fill = resolve-fill(_raw-fill)
@@ -111,7 +113,12 @@
       styled
     }
 
-    _frame(block(width: 100%, height: effective-height, breakable: false, titled))
+    _frame(block(
+      width: 100%,
+      height: effective-height,
+      breakable: false,
+      titled,
+    ))
   } else {
     let hidden-frame = if _raw-fill == "grid" or _raw-fill == fill-grid {
       resolve-frame(_raw-frame, inset: 0pt)

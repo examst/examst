@@ -20,12 +20,12 @@
   }
 
   if dict == none {
-    return (content) => content
+    return content => content
   }
 
   for (k, v) in overrides.named() {
     dict.insert(k, v)
   }
 
-  (content) => block(..dict, content)
+  content => block(..dict, content)
 }

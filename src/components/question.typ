@@ -17,7 +17,7 @@
   points: (:),
   aggregate: false,
   inline: false,
-  body
+  body,
 ) = context {
   // TODO: allow for customizing wrapper
   let _wrapper = if inline {
@@ -25,15 +25,15 @@
   } else {
     block.with(inset: (left: 1em), width: 100%)
   }
-  
+
   let _render-counter = arg-or-default(
-    render-question-counter, 
-    "render-question-counter"
+    render-question-counter,
+    "render-question-counter",
   )
-  
+
   let _render-pts = arg-or-default(
     render-points,
-    "render-points"
+    "render-points",
   )
   // Resolve preset name to function
   let _render-pts = if type(_render-pts) == str {
@@ -41,10 +41,10 @@
   } else {
     _render-pts
   }
-  
+
   let _pts-position = arg-or-default(
     points-position,
-    "points-position"
+    "points-position",
   )
   // Resolve preset name to function
   let _pts-position = if type(_pts-position) == str {
@@ -52,7 +52,7 @@
   } else {
     _pts-position
   }
-    
+
   let _points = if type(points) == int or type(points) == float {
     (points: points)
   } else {
@@ -73,7 +73,9 @@
       let _points-end-label = if aggregate {
         _q-end-label()
       } else {
-        if next-q-start-label() != none { next-q-start-label() } else { _q-end-label() }
+        if next-q-start-label() != none { next-q-start-label() } else {
+          _q-end-label()
+        }
       }
       let _pts = points-between(
         _q-start-label(),
@@ -82,14 +84,14 @@
       _render-pts(_pts)
     }
 
-    let _counter-content = context[#_render-counter(state._question-number)]
+    let _counter-content = context [#_render-counter(state._question-number)]
     let _depth = state._question-depth.get()
 
     _pts-position(_pts-content, _counter-content, body, _depth)
 
     _q-end()
 
-    context[
+    context [
       #state._question-depth.update(it => it - 1)
     ]
   })

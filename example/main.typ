@@ -2,17 +2,17 @@
 
 #set page(paper: "us-letter")
 
-#examst-set(
-  render-question-counter: it => [
-    #let depth = it.get().len()
-    #let last = it.get().last()
-    #if depth == 1 {
-      numbering("1.", last)
-    } else if depth == 2 {
-      numbering("(a)", last)
-    }
-  ],
-)
+#let question-counter = it => [
+  #let depth = it.get().len()
+  #let last = it.get().last()
+  #if depth == 1 {
+    numbering("1.", last)
+  } else if depth == 2 {
+    numbering("(a)", last)
+  }
+]
+
+#examst-set(render-question-counter: question-counter)
 
 #question(points: 10, aggregate: true)[
   Why is there air?
@@ -70,15 +70,7 @@
 
 #examst-reset()
 #examst-set(
-  render-question-counter: it => [
-    #let depth = it.get().len()
-    #let last = it.get().last()
-    #if depth == 1 {
-      numbering("1.", last)
-    } else if depth == 2 {
-      numbering("(a)", last)
-    }
-  ],
+  render-question-counter: question-counter,
   render-points: "bracketed",
 )
 
@@ -100,15 +92,7 @@
 = Points before counter
 
 #examst-set(
-  render-question-counter: it => [
-    #let depth = it.get().len()
-    #let last = it.get().last()
-    #if depth == 1 {
-      numbering("1.", last)
-    } else if depth == 2 {
-      numbering("(a)", last)
-    }
-  ],
+  render-question-counter: question-counter,
   points-position: "before-counter",
 )
 
@@ -130,15 +114,7 @@
 = Points after body
 
 #examst-set(
-  render-question-counter: it => [
-    #let depth = it.get().len()
-    #let last = it.get().last()
-    #if depth == 1 {
-      numbering("1.", last)
-    } else if depth == 2 {
-      numbering("(a)", last)
-    }
-  ],
+  render-question-counter: question-counter,
   points-position: "after-body",
 )
 
@@ -160,15 +136,7 @@
 = Points in the left margin
 
 #examst-set(
-  render-question-counter: it => [
-    #let depth = it.get().len()
-    #let last = it.get().last()
-    #if depth == 1 {
-      numbering("1.", last)
-    } else if depth == 2 {
-      numbering("(a)", last)
-    }
-  ],
+  render-question-counter: question-counter,
   points-position: "left-margin",
 )
 
@@ -190,15 +158,7 @@
 = Points in the right margin
 
 #examst-set(
-  render-question-counter: it => [
-    #let depth = it.get().len()
-    #let last = it.get().last()
-    #if depth == 1 {
-      numbering("1.", last)
-    } else if depth == 2 {
-      numbering("(a)", last)
-    }
-  ],
+  render-question-counter: question-counter,
   render-points: "boxed",
   points-position: "two-sided",
 )
@@ -313,17 +273,7 @@
 
 = Solution examples
 
-#examst-set(
-  render-question-counter: it => [
-    #let depth = it.get().len()
-    #let last = it.get().last()
-    #if depth == 1 {
-      numbering("1.", last)
-    } else if depth == 2 {
-      numbering("(a)", last)
-    }
-  ],
-)
+#examst-set(render-question-counter: question-counter)
 
 == solution() — hidden: nothing, shown: framed
 
@@ -358,7 +308,11 @@
 
 #question(points: 10)[
   Draw a diagram of a cell.
-  #answer(fill: fill-grid.with(spacing: 0.4in), frame:(stroke: 0.5pt), height: 3in)[
+  #answer(
+    fill: fill-grid.with(spacing: 0.4in),
+    frame: (stroke: 0.5pt),
+    height: 3in,
+  )[
     A labeled diagram of an animal cell.
   ]
 ]
@@ -367,7 +321,11 @@
 
 #question(points: 5)[
   Write your name.
-  #answer(fill: v, frame: (stroke: 0.5pt, width: 100%, inset: 8pt), height: 1in)[
+  #answer(
+    fill: v,
+    frame: (stroke: 0.5pt, width: 100%, inset: 8pt),
+    height: 1in,
+  )[
     Andrew
   ]
 ]
