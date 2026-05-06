@@ -299,7 +299,7 @@
 #examst-set(show-answers: true)
 
 #question(points: 5)[
-  What is 2 + 2? 
+  What is 2 + 2?
   #multi-choice(
     marker: "bubble-letter",
     [3],
@@ -310,3 +310,84 @@
 ]
 
 #examst-reset()
+
+= Solution examples
+
+#examst-set(
+  render-question-counter: it => [
+    #let depth = it.get().len()
+    #let last = it.get().last()
+    #if depth == 1 {
+      numbering("1.", last)
+    } else if depth == 2 {
+      numbering("(a)", last)
+    }
+  ],
+)
+
+== solution() — hidden: nothing, shown: framed
+
+#examst-set(show-answers: true)
+
+#question(points: 5)[
+  Why is the sky blue?
+  #solution[
+    Rayleigh scattering of sunlight by atmospheric molecules.
+  ]
+]
+
+#examst-set(show-answers: false)
+
+#question(points: 5)[
+  Why is the sky blue? (answers hidden — nothing below)
+  #solution[
+    Rayleigh scattering of sunlight by atmospheric molecules.
+  ]
+]
+
+== answer() — default lines fill
+
+#question(points: 10)[
+  Explain the water cycle.
+  #answer[
+    Evaporation, condensation, precipitation, collection.
+  ]
+]
+
+== answer() — grid fill
+
+#question(points: 10)[
+  Draw a diagram of a cell.
+  #answer(fill: fill-grid.with(spacing: 0.4in), frame:(stroke: 0.5pt), height: 3in)[
+    A labeled diagram of an animal cell.
+  ]
+]
+
+== answer() — custom fill (blank box, replaces solution-box)
+
+#question(points: 5)[
+  Write your name.
+  #answer(fill: v, frame: (stroke: 0.5pt, width: 100%, inset: 8pt), height: 1in)[
+    Andrew
+  ]
+]
+
+== answer() — shown mode
+
+#examst-set(show-answers: true)
+
+#question(points: 10)[
+  Explain the water cycle.
+  #answer[
+    Evaporation, condensation, precipitation, collection.
+  ]
+]
+
+#examst-set(show-answers: false)
+
+== answer-space — always visible, standalone
+
+#answer-space()
+#answer-space(fill: fill-grid.with(spacing: 0.45in), height: 1in)
+#answer-space(fill: "none", frame: "boxed")
+#answer-space(height: 1in, frame: "boxed")

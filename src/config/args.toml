@@ -61,6 +61,41 @@ default = "none"
 types = ["str", "array", "type(none)"]
 function = false
 
+[solution-title]
+title = "Solution Title"
+description = "Content prepended to printed solutions. Set to none to disable."
+default = '[*Solution:* ]'
+types = ["content", "type(none)"]
+function = false
+
+[solution-emphasis]
+title = "Solution Emphasis"
+description = "Function applied to solution body text when printed."
+default = "(it) => it"
+types = ["function"]
+function = false
+
+[solution-frame]
+title = "Solution Frame"
+description = "How printed solutions are visually framed. Presets: boxed, shaded, none. Also accepts a dictionary of block() keys or a (content) -> content function."
+default = '"boxed"'
+types = ["str:boxed", "str:shaded", "str:none", "dictionary", "function"]
+function = false
+
+[solution-fill]
+title = "Solution Fill"
+description = "Default fill pattern for answer spaces. Presets: lines, grid, none. Also accepts a (height) -> content function."
+default = '"lines"'
+types = ["str:lines", "str:grid", "str:none", "function"]
+function = false
+
+[solution-height]
+title = "Solution Height"
+description = "Default height for answer spaces."
+default = "2in"
+types = ["length"]
+function = false
+
 [fill-in-width]
 title = "Fill in the blank line width"
 description = "Width used for fill in the blank lines."
