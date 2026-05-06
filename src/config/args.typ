@@ -67,7 +67,11 @@
 
   use => {
     if allow-func and (not use) {
-      "one of: " + parts.join(", ") + ", or a function that returns one of the previous"
+      (
+        "one of: "
+          + parts.join(", ")
+          + ", or a function that returns one of the previous"
+      )
     } else {
       "one of: " + parts.join(", ")
     }
@@ -95,7 +99,12 @@
     update: value => {
       assert(
         checker(value, false),
-        message: "examst: `" + name + "` must be " + type-str-fn(false) + ", found: " + repr(value),
+        message: "examst: `"
+          + name
+          + "` must be "
+          + type-str-fn(false)
+          + ", found: "
+          + repr(value),
       )
       st.update(_ => value)
     },
@@ -106,7 +115,12 @@
 
       assert(
         checker(value, true),
-        message: "examst: `" + name + "` must be " + type-str-fn(true) + ", found: " + repr(value),
+        message: "examst: `"
+          + name
+          + "` must be "
+          + type-str-fn(true)
+          + ", found: "
+          + repr(value),
       )
 
       value
@@ -126,7 +140,9 @@
   for (key, arg) in args {
     let specs = arg.types.map(parse-type-spec)
 
-    let has-function-type = specs.any(s => s.kind == "type" and s.ty == function)
+    let has-function-type = specs.any(s => (
+      s.kind == "type" and s.ty == function
+    ))
     if arg.function and has-function-type {
       panic("examst (internal): `function` is not a valid type for an argument")
     }
@@ -192,7 +208,7 @@
 
 /// Conditionally render based off of answer state
 #let if-print-answers(body, other) = context {
-  if (__examst-args.at("show-answers").get-raw)() {
+  if is-show-answers() {
     body
   } else {
     other
