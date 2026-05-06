@@ -9,7 +9,7 @@
   spacing: 0.33in,
   stroke: 0.5pt,
 ) = {
-  block(width: 100%, height: height, clip: true, {
+  block(width: 100%, height: height, breakable: false, {
     let y = spacing / 2
     while y < height {
       place(top, dy: y, line(length: 100%, stroke: stroke))
@@ -19,19 +19,28 @@
 }
 
 /// Fills vertical space with a grid of squares.
+/// Both width and height are snapped to the nearest multiple of spacing for a clean fit.
 #let fill-grid(
   height,
   spacing: 5mm,
   stroke: 0.5pt,
-) = {
-  block(width: 100%, height: height, clip: false, {
+) = layout(size => {
+  let rows = calc.floor(height / spacing)
+  let cols = calc.floor(size.width / spacing)
+  let snapped-height = rows * spacing
+  let snapped-width = cols * spacing
+  block(width: snapped-width, height: snapped-height, breakable: false, {
     let y = 0pt
-    while y <= height {
-      place(dy: y, repeat(square(size: spacing, stroke: stroke), justify: false))
+    while y < snapped-height {
+      let x = 0pt
+      while x < snapped-width {
+        place(dx: x, dy: y, square(size: spacing, stroke: stroke))
+        x += spacing
+      }
       y += spacing
     }
   })
-}
+})
 
 // ── Fill configs & resolution ────────────────────────────────────
 

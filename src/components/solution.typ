@@ -11,6 +11,29 @@
 
 // ── Primary API ──────────────────────────────────────────────────
 
+/// Always-visible answer space. Not tied to show/hide — renders unconditionally.
+///
+/// - `height`: Height of the space. Defaults to global `solution-height`.
+/// - `fill`: Fill pattern — preset string or `(height) -> content` function.
+/// - `frame`: Framing style — preset string, dict of block() keys, or function.
+///   Defaults to `"none"` (no border).
+#let answer-space(
+  height: __examst-default,
+  fill: __examst-default,
+  frame: "none",
+) = context {
+  let _height = arg-or-default(height, "solution-height")
+  let _raw-fill = arg-or-default(fill, "solution-fill")
+  let _fill = resolve-fill(_raw-fill)
+  let _frame = if _raw-fill == "grid" or _raw-fill == fill-grid {
+    resolve-frame(frame, inset: 0pt, width: auto)
+  } else {
+    resolve-frame(frame)
+  }
+  _frame(_fill(_height))
+}
+
+
 /// Renders nothing when answers are hidden and a framed solution when shown.
 ///
 /// - `title`: Content prepended to the solution (e.g. `[*Solution:*]`).
@@ -65,8 +88,10 @@
 ) = context {
   let _show = (__examst-args.at("show-answers").get-raw)()
   let _height = arg-or-default(height, "solution-height")
-  let _fill = resolve-fill(arg-or-default(fill, "solution-fill"))
-  let _frame = resolve-frame(arg-or-default(frame, "solution-frame"))
+  let _raw-fill = arg-or-default(fill, "solution-fill")
+  let _fill = resolve-fill(_raw-fill)
+  let _raw-frame = arg-or-default(frame, "solution-frame")
+  let _frame = resolve-frame(_raw-frame)
   let _title = arg-or-default(title, "solution-title")
   let _emphasis = arg-or-default(emphasis, "solution-emphasis")
 
@@ -86,8 +111,13 @@
       styled
     }
 
-    _frame(block(width: 100%, height: effective-height, titled))
+    _frame(block(width: 100%, height: effective-height, breakable: false, titled))
   } else {
-    _frame(block(width: 100%, height: _height, _fill(_height)))
+    let hidden-frame = if _raw-fill == "grid" or _raw-fill == fill-grid {
+      resolve-frame(_raw-frame, inset: 0pt)
+    } else {
+      _frame
+    }
+    hidden-frame(_fill(_height))
   }
 }

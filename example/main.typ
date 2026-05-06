@@ -385,7 +385,9 @@
 
 #examst-set(show-answers: false)
 
-== Standalone fill-lines / fill-grid
+== answer-space — always visible, standalone
 
-#fill-lines(1.5in)
-#fill-grid(1.5in)
+#answer-space()
+#answer-space(fill: "grid")
+#answer-space(fill: "none", frame: "boxed")
+#answer-space(height: 1in, frame: "boxed")
