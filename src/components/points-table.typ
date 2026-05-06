@@ -230,25 +230,27 @@
     })
   }
 
-  if totals != none {
-    table(
-      columns: n-cols,
-      align: center + horizon,
-      stroke: 0.5pt,
-      ..header-cells,
-      ..data-cells,
-      table.hline(stroke: 1pt),
-      ..total-cells,
-    )
-  } else {
-    table(
-      columns: n-cols,
-      align: center + horizon,
-      stroke: 0.5pt,
-      ..header-cells,
-      ..data-cells,
-    )
-  }
+  block(breakable: false,
+    if totals != none {
+      table(
+        columns: n-cols,
+        align: center + horizon,
+        stroke: 0.5pt,
+        ..header-cells,
+        ..data-cells,
+        table.hline(stroke: 1pt),
+        ..total-cells,
+      )
+    } else {
+      table(
+        columns: n-cols,
+        align: center + horizon,
+        stroke: 0.5pt,
+        ..header-cells,
+        ..data-cells,
+      )
+    }
+  )
 }
 
 // ── Horizontal renderer ────────────────────────────────────────────
@@ -310,11 +312,13 @@
     }
   }
 
-  table(
-    columns: n-table-cols,
-    align: center + horizon,
-    stroke: 0.5pt,
-    ..all-cells,
+  block(breakable: false,
+    table(
+      columns: n-table-cols,
+      align: center + horizon,
+      stroke: 0.5pt,
+      ..all-cells,
+    )
   )
 }
 
