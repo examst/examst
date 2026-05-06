@@ -358,7 +358,7 @@
 
 #question(points: 10)[
   Draw a diagram of a cell.
-  #answer(fill: "grid", height: 3in)[
+  #answer(fill: fill-grid.with(spacing: 0.4in), frame:(stroke: 0.5pt), height: 3in)[
     A labeled diagram of an animal cell.
   ]
 ]
@@ -388,6 +388,6 @@
 == answer-space — always visible, standalone
 
 #answer-space()
-#answer-space(fill: "grid")
+#answer-space(fill: fill-grid.with(spacing: 0.45in), height: 1in)
 #answer-space(fill: "none", frame: "boxed")
 #answer-space(height: 1in, frame: "boxed")

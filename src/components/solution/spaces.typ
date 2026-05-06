@@ -19,25 +19,27 @@
 }
 
 /// Fills vertical space with a grid of squares.
-/// Both width and height are snapped to the nearest multiple of spacing for a clean fit.
+/// Cell size is adjusted so that columns divide the available width evenly.
+/// Height is snapped down to a multiple of the adjusted cell size.
 #let fill-grid(
   height,
   spacing: 5mm,
   stroke: 0.5pt,
 ) = layout(size => {
-  let rows = calc.floor(height / spacing)
-  let cols = calc.floor(size.width / spacing)
-  let snapped-height = rows * spacing
-  let snapped-width = cols * spacing
-  block(width: snapped-width, height: snapped-height, breakable: false, {
+  let eps = 0.1mm
+  let cols = calc.round(size.width / spacing)
+  let cell = size.width / cols
+  let rows = calc.floor(height / cell)
+  let snapped-height = rows * cell
+  block(width: 100%, height: snapped-height, breakable: false, {
     let y = 0pt
-    while y < snapped-height {
+    while y < snapped-height - eps {
       let x = 0pt
-      while x < snapped-width {
-        place(dx: x, dy: y, square(size: spacing, stroke: stroke))
-        x += spacing
+      while x < size.width - eps {
+        place(dx: x, dy: y, square(size: cell, stroke: stroke))
+        x += cell
       }
-      y += spacing
+      y += cell
     }
   })
 })

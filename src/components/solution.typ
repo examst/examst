@@ -26,7 +26,7 @@
   let _raw-fill = arg-or-default(fill, "solution-fill")
   let _fill = resolve-fill(_raw-fill)
   let _frame = if _raw-fill == "grid" or _raw-fill == fill-grid {
-    resolve-frame(frame, inset: 0pt, width: auto)
+    resolve-frame(frame, inset: 0pt)
   } else {
     resolve-frame(frame)
   }
