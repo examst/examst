@@ -1,0 +1,33 @@
+---
+title: examst
+description: Utilities for exam-writing in Typst
+template: splash
+hero:
+  tagline: A Typst package for creating professional exam documents with numbered questions, multiple-choice, fill-in-the-blank, solutions, and points tables.
+  actions:
+    - text: Get Started
+      link: /getting-started/introduction/
+      icon: right-arrow
+      variant: primary
+    - text: View on Codeberg
+      link: https://codeberg.org/landrew/examst
+      icon: external
+---
+
+import TypstExample from '../../components/TypstExample.astro';
+
+## Quick Example
+
+<TypstExample code={`#question(points: 10)[
+    What is the airspeed velocity of an unladen swallow?
+    #multi-choice(
+      marker: "bubble-letter",
+      [European or African?],
+      correct[About 11 m/s],
+      [Unknown],
+    )
+  ]
+
+  #question(points: 5)[
+    The capital of France is #fill-in[Paris].
+  ]`} preamble={`#examst-set(render-question-counter: it => numbering("1.", it.get().last()))`} width="400pt" />

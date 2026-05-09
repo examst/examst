@@ -1,0 +1,98 @@
+---
+title: Points Table
+description: Summary table of exam points with multiple layout options
+---
+
+import TypstExample from '../../../components/TypstExample.astro';
+
+The `points-table` function generates a summary table of all (or selected) questions and their point values.
+
+## API
+
+```typst
+#points-table(orientation: <str>, columns: <auto|array>, score: <bool>, ...)
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `orientation` | `str` | `"vertical"` | `"vertical"` = questions as rows; `"horizontal"` = questions as columns |
+| `columns` | `auto` or `array` | `auto` | Which columns to show |
+| `score` | `bool` | `false` | Append a blank "Score" column for hand-grading |
+| `fill-scores` | `bool` | `false` | Fill score cells with max points when answers shown |
+| `total` | `auto`, number, or `dict` | `auto` | Override the total row |
+| `depth` | `int` | `1` | How many levels of hierarchy to show |
+| `questions` | `auto` or `array` | `auto` | Filter to specific question numbers |
+| `group-by-parent` | `bool` | `false` | Show parent questions as header rows |
+| `max-per-group` | `none` or `int` | `none` | Auto-split into sub-tables |
+| `labels` | `dictionary` | `(:)` | Override display labels |
+| `render` | `auto` or `function` | `auto` | Custom renderer |
+
+## Basic Usage
+
+<TypstExample code={`#examst-set(
+    render-question-counter: it => numbering("1.", it.get().last()),
+  )
+
+  #question(points: 10)[Why is there air?]
+  #question(points: 15)[Explain gravity.]
+  #question(points: 20)[What is energy?]
+
+  #align(center, points-table())`} width="400pt" />
+
+## Horizontal Layout
+
+<TypstExample code={`#examst-set(
+    render-question-counter: it => numbering("1.", it.get().last()),
+  )
+
+  #question(points: 10)[Why is there air?]
+  #question(points: 15)[Explain gravity.]
+  #question(points: 20)[What is energy?]
+
+  #align(center, points-table(orientation: "horizontal"))`} width="400pt" />
+
+## With Score Column
+
+<TypstExample code={`#examst-set(
+    render-question-counter: it => numbering("1.", it.get().last()),
+  )
+
+  #question(points: 10)[Why is there air?]
+  #question(points: 15)[Explain gravity.]
+  #question(points: 20)[What is energy?]
+
+  #align(center, points-table(score: true))`} width="400pt" />
+
+## Custom Labels (Localization)
+
+<TypstExample code={`#examst-set(
+    render-question-counter: it => numbering("1.", it.get().last()),
+  )
+
+  #question(points: 10)[Warum gibt es Luft?]
+  #question(points: 15)[Erkl\u00e4ren Sie die Schwerkraft.]
+
+  #align(center, points-table(
+    score: true,
+    labels: (
+      question: "Aufgabe",
+      points: "Punkte",
+      score: "Note",
+      total: "Summe",
+    ),
+  ))`} width="400pt" />
+
+## Overflow Splitting
+
+For exams with many questions, split the table into manageable groups:
+
+```typst
+// Vertical: splits side-by-side
+#align(center, points-table(max-per-group: 5))
+
+// Horizontal: stacks vertically
+#align(center, points-table(
+  orientation: "horizontal",
+  max-per-group: 5,
+))
+```

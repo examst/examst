@@ -1,0 +1,20 @@
+when:
+  branch: main
+  event: [push]
+
+steps:
+  build:
+    image: oven/bun:1
+    commands:
+      - cd docs/web
+      - bun install
+      - bun run build
+
+  deploy:
+    image: codeberg.org/sugar700/plugin-codeberg-pages-deploy:1
+    settings:
+      folder: docs/web/dist
+      ssh_key:
+        from_secret: ssh_key
+    when:
+      event: [push]

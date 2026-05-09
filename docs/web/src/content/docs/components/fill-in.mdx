@@ -1,0 +1,38 @@
+---
+title: Fill-in-the-Blank
+description: Short-answer blanks with configurable width
+---
+
+import TypstExample from '../../../components/TypstExample.astro';
+
+For short-answer questions where students write on a line.
+
+## API
+
+```typst
+#fill-in[answer](width: <auto|length>, stroke: <stroke>)
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `answer` | `content` | — | The correct answer (shown when answers are visible) |
+| `width` | `auto` or `length` | `auto` | Width of the blank line. `auto` measures the answer content plus padding. |
+| `stroke` | `stroke` | `0.5pt` | The stroke style for the underline |
+
+## Basic Usage
+
+<TypstExample code={`The capital of France is #fill-in[Paris].`} />
+
+## With Answers Shown
+
+<TypstExample code={`#examst-set(show-answers: true)
+  The capital of France is #fill-in[Paris].
+  #examst-reset()`} />
+
+## Custom Width
+
+You can set the width globally or per-instance:
+
+<TypstExample code={`#examst-set(fill-in-width: 3in)
+  Name: #fill-in[Andrew Smith]
+  #examst-reset()`} />

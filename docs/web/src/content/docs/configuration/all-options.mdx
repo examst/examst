@@ -1,0 +1,173 @@
+---
+title: All Options
+description: Complete reference of examst configuration options
+---
+
+import TypstExample from '../../../components/TypstExample.astro';
+
+All options below can be passed to `examst-set()`.
+
+## Display Options
+
+### show-answers
+
+| Type | Default |
+|------|---------|
+| `bool` | `false` |
+
+Whether to display correct answers, solutions, and filled score cells. Toggle this to generate an answer key from the same source document.
+
+## Question Rendering
+
+### render-question-counter
+
+| Type | Default |
+|------|---------|
+| `function` | — |
+
+A function `(counter) => content` that formats the question number. Receives the `question-number` counter.
+
+<TypstExample code={`#examst-set(
+    render-question-counter: it => [
+      #let depth = it.get().len()
+      #let last = it.get().last()
+      #if depth == 1 { numbering("1.", last) }
+      #if depth == 2 { numbering("(a)", last) }
+    ],
+  )
+
+  #question(points: 5)[Top-level question.]
+  #question()[
+    Parent
+    #question(points: 3)[Sub-part a]
+    #question(points: 3)[Sub-part b]
+  ]`} width="400pt" />
+
+### render-points
+
+| Type | Default |
+|------|---------|
+| `str` or `function` | `"parenthesized"` |
+
+How points are formatted next to questions.
+
+**Presets:** `"parenthesized"`, `"bracketed"`, `"boxed"`
+
+Or provide a custom `(points-dict) => content` function.
+
+<TypstExample code={`#examst-set(
+    render-question-counter: it => numbering("1.", it.get().last()),
+    render-points: "boxed",
+  )
+
+  #question(points: 10)[Boxed points style.]`} />
+
+### points-position
+
+| Type | Default |
+|------|---------|
+| `str` or `function` | `"inline"` |
+
+Where points appear relative to the question.
+
+| Preset | Description |
+|--------|-------------|
+| `"inline"` | After the counter, before the body |
+| `"before-counter"` | Before the counter |
+| `"after-body"` | At the end of the question |
+| `"left-margin"` / `"right-margin"` | Placed in the page margin |
+| `"two-sided"` / `"two-sided-reversed"` | Alternates margins on odd/even pages |
+
+## Multi-Choice Options
+
+### multi-choice-columns
+
+| Type | Default |
+|------|---------|
+| `int` or `none` | `1` |
+
+Default column count for multi-choice layouts. `1` = vertical list, `none` = inline/wrapping, `> 1` = grid.
+
+### multi-choice-marker
+
+| Type | Default |
+|------|---------|
+| `str` or `function` | `"bubble"` |
+
+Default marker style. Presets: `"bubble"`, `"bubble-letter"`, `"checkbox"`, `"checkbox-letter"`, `"none"`.
+
+### multi-choice-label
+
+| Type | Default |
+|------|---------|
+| `str` | `"A"` |
+
+Numbering pattern for choice labels (passed to `numbering()`).
+
+### multi-choice-correct-emphasis
+
+| Type | Default |
+|------|---------|
+| `function` | — |
+
+Function applied to correct-answer text when `show-answers` is `true`.
+
+### multi-choice-marker-font
+
+| Type | Default |
+|------|---------|
+| `str`, `array`, or `none` | `none` |
+
+Font for marker letters. `none` inherits the document font.
+
+## Solution Options
+
+### solution-title
+
+| Type | Default |
+|------|---------|
+| `content` or `none` | `[*Solution:* ]` |
+
+Content prepended to printed solutions. Set to `none` to disable.
+
+### solution-emphasis
+
+| Type | Default |
+|------|---------|
+| `function` | — |
+
+Function applied to solution body text when printed.
+
+### solution-frame
+
+| Type | Default |
+|------|---------|
+| `str`, `dictionary`, or `function` | `"boxed"` |
+
+How solutions are framed. Presets: `"boxed"`, `"shaded"`, `"none"`. Also accepts a dictionary of `block()` keys or a `(content) => content` function.
+
+### solution-fill
+
+| Type | Default |
+|------|---------|
+| `str` or `function` | `"lines"` |
+
+Fill pattern for answer spaces. Presets: `"lines"`, `"grid"`, `"none"`. Or a `(height) => content` function.
+
+### solution-height
+
+| Type | Default |
+|------|---------|
+| `length` | `2in` |
+
+Default height for answer spaces.
+
+## Fill-in Options
+
+### fill-in-width
+
+| Type | Default |
+|------|---------|
+| `auto`, `length`, or `function` | `auto` |
+
+Width of fill-in-the-blank lines. `auto` measures the answer content.

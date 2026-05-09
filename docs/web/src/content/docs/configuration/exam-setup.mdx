@@ -1,0 +1,60 @@
+---
+title: Exam Setup
+description: Configure examst for your document
+---
+
+import TypstExample from '../../../components/TypstExample.astro';
+
+All global options are controlled through two functions: `examst-set` to update options and `examst-reset` to restore defaults.
+
+## examst-set()
+
+Updates one or more global configuration options. Only the specified options are changed; all others retain their current values.
+
+<TypstExample code={`#examst-set(
+    show-answers: true,
+    render-points: "boxed",
+    points-position: "inline",
+    render-question-counter: it => numbering("1.", it.get().last()),
+  )
+
+  #question(points: 10)[
+    What is the answer to life, the universe, and everything?
+    #solution[42]
+  ]
+
+  #examst-reset()`} width="400pt" />
+
+## examst-reset()
+
+Resets all configuration options to their defaults. Useful after a section where you changed settings temporarily.
+
+```typst
+#examst-set(show-answers: true)
+// ... answer key section ...
+#examst-reset()
+// back to normal exam rendering
+```
+
+## Typical Exam Preamble
+
+A common setup for a full exam document:
+
+```typst
+#import "@preview/examst:0.1.0": *
+
+#examst-set(
+  render-question-counter: it => [
+    #let depth = it.get().len()
+    #let last = it.get().last()
+    #if depth == 1 { numbering("1.", last) }
+    #if depth == 2 { numbering("(a)", last) }
+    #if depth == 3 { numbering("i.", last) }
+  ],
+  render-points: "parenthesized",
+  points-position: "inline",
+  multi-choice-marker: "bubble-letter",
+)
+
+// Your exam content follows...
+```

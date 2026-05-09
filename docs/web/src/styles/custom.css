@@ -1,0 +1,16 @@
+:root {
+  --sl-sidebar-width: 16rem;
+  --sl-content-width: 55rem;
+  /* Teal accent inspired by typst.app */
+  --sl-color-accent-low: #d0f0ed;
+  --sl-color-accent: #239dad;
+  --sl-color-accent-high: #f0fafa;
+  --sl-hue-accent: 185;
+  --sl-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+}
+
+:root[data-theme="dark"] {
+  --sl-color-accent-low: #1a3a3f;
+  --sl-color-accent: #3abdc8;
+  --sl-color-accent-high: #d0f5f5;
+}
