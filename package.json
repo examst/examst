@@ -1,0 +1,9 @@
+{
+  "name": "examst-prototyping",
+  "private": true,
+  "scripts": {
+    "docs:build": "bun run --cwd docs/web build",
+    "docs:dev": "bun run --cwd docs/web dev",
+    "docs:preview": "bun run --cwd docs/web preview"
+  }
+}

@@ -2,7 +2,7 @@
 name = "examst"
 version = "0.0.1"
 entrypoint = "src/lib.typ"
-authors = []
+authors = ["Andrew Liu <https://landrew.dev>"]
 license = "MIT"
 description = "Utilities for exam-writing"
 exclude = [ "/docs/*", "/example/*" ]
