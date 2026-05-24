@@ -1,7 +1,11 @@
 name: Deploy Docs to Cloudflare Pages
 
 on:
+  workflow_dispatch:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
@@ -28,5 +32,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist/ --project-name=examst
+          command: pages deploy dist/ --project-name=examst --branch=${{ github.head_ref || 'main' }}
           workingDirectory: docs/web
