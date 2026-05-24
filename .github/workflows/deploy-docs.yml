@@ -31,13 +31,25 @@ jobs:
         run: bun run build
         working-directory: docs/web
 
+      - name: Determine deploy branch
+        id: branch
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          branch="${HEAD_REF:-main}"
+          if ! [[ "$branch" =~ ^[a-zA-Z0-9/_.-]+$ ]]; then
+            echo "::error::Invalid branch name: $branch"
+            exit 1
+          fi
+          echo "name=$branch" >> "$GITHUB_OUTPUT"
+
       - name: Deploy to Cloudflare Pages
         id: deploy
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist/ --project-name=examst --branch=${{ github.head_ref || 'main' }}
+          command: pages deploy dist/ --project-name=examst --branch=${{ steps.branch.outputs.name }}
           workingDirectory: docs/web
 
       - name: Comment preview URL on PR
