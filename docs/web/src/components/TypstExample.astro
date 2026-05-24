@@ -1,0 +1,190 @@
+---
+import { createHighlighter } from "shiki";
+import { NodeCompiler } from "@myriaddreamin/typst-ts-node-compiler";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { existsSync } from "node:fs";
+import crypto from "node:crypto";
+
+interface Props {
+  /** Typst source code to compile and render */
+  code: string;
+  /** Whether to show the source code alongside the rendered output */
+  showCode?: boolean;
+  /** Page width for the rendered example (default: 300pt) */
+  width?: string;
+  /** Additional preamble prepended before the code */
+  preamble?: string;
+}
+
+const { code, showCode = true, width = "300pt", preamble = "" } = Astro.props;
+
+// Find the workspace root (contains src/lib.typ)
+function findWorkspace(): string {
+  const componentDir = import.meta.dirname ?? path.dirname(fileURLToPath(import.meta.url));
+  let candidate = path.resolve(componentDir, "../../../../");
+  if (existsSync(path.join(candidate, "src/lib.typ"))) return candidate;
+
+  candidate = path.resolve(process.cwd(), "../../");
+  if (existsSync(path.join(candidate, "src/lib.typ"))) return candidate;
+
+  candidate = process.cwd();
+  if (existsSync(path.join(candidate, "src/lib.typ"))) return candidate;
+
+  throw new Error(`Cannot find examst workspace (src/lib.typ) from ${componentDir} or ${process.cwd()}`);
+}
+
+/**
+ * Post-process SVG from typst.ts to fix inline rendering issues:
+ * - Remove the internal <style> block (contains `svg { fill: none }` that leaks globally)
+ * - Prefix glyph IDs to avoid collisions between multiple SVGs on the same page
+ * - Set explicit fill on the SVG for proper glyph rendering
+ */
+function fixSvg(raw: string, uid: string): string {
+  // Remove the <style> blocks (they contain problematic global rules)
+  let svg = raw.replace(/<style[^>]*>[\s\S]*?<\/style>/g, "");
+
+  // Prefix all IDs and their references to avoid collisions
+  svg = svg.replace(/id="([^"]+)"/g, `id="${uid}-$1"`);
+  svg = svg.replace(/href="#([^"]+)"/g, `href="#${uid}-$1"`);
+  svg = svg.replace(/url\(#([^)]+)\)/g, `url(#${uid}-$1)`);
+
+  // Remove the foreignObject elements (selection helpers, not needed for static docs)
+  svg = svg.replace(/<foreignObject[\s\S]*?<\/foreignObject>/g, "");
+
+  // Fix the SVG root: replace existing style on the <svg> tag with our vars
+  svg = svg.replace(
+    /^(<svg\s[^>]*?)style="[^"]*"/,
+    '$1style="overflow: visible; --glyph_fill: black; --glyph_stroke: none;"'
+  );
+
+  return svg;
+}
+
+const workspace = findWorkspace();
+const compiler = NodeCompiler.create({ workspace });
+
+const fullPreamble = `#import "/src/lib.typ": *
+#set page(width: ${width}, height: auto, margin: 10pt)
+${preamble}`;
+
+const fullSource = fullPreamble + "\n" + code;
+
+let svg = "";
+let error = "";
+try {
+  const raw = compiler.svg({ mainFileContent: fullSource });
+  const uid = "t" + crypto.randomBytes(4).toString("hex");
+  svg = fixSvg(raw, uid);
+} catch (e: any) {
+  error = e?.message || e?.toString?.() || JSON.stringify(e);
+}
+
+compiler.evictCache(10);
+
+const highlighter = await createHighlighter({
+  themes: ["github-dark", "github-light"],
+  langs: ["typst"],
+});
+const highlightedCode = highlighter.codeToHtml(code, {
+  lang: "typst",
+  themes: { dark: "github-dark", light: "github-light" },
+});
+highlighter.dispose();
+---
+
+<div class="typst-example not-content">
+  {showCode && (
+    <div class="typst-example-code">
+      <Fragment set:html={highlightedCode} />
+    </div>
+  )}
+  <div class="typst-example-output">
+    {error ? (
+      <pre class="typst-error">{error}</pre>
+    ) : (
+      <Fragment set:html={svg} />
+    )}
+  </div>
+</div>
+
+<style>
+  .typst-example {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 1.5rem 0;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--sl-color-gray-5);
+  }
+
+  .typst-example:has(> :only-child) {
+    grid-template-columns: 1fr;
+  }
+
+  .typst-example-code {
+    padding: 0.75rem 1rem;
+    overflow-x: auto;
+    background: var(--sl-color-gray-7, #f8f9fa);
+  }
+
+  .typst-example-code :global(pre) {
+    margin: 0;
+    padding: 0;
+    background: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  .typst-example-code :global(code) {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  .typst-example-output {
+    padding: 1rem;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: white;
+    border-left: 1px solid var(--sl-color-gray-5);
+    min-width: 0;
+  }
+
+  .typst-example-output :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+
+  .typst-error {
+    color: var(--sl-color-red);
+    font-size: 0.8125rem;
+    white-space: pre-wrap;
+  }
+
+  /* Dark mode adjustments */
+  :global([data-theme="dark"]) .typst-example {
+    border-color: var(--sl-color-gray-4);
+  }
+
+  :global([data-theme="dark"]) .typst-example-code {
+    background: var(--sl-color-gray-6);
+  }
+
+  :global([data-theme="dark"]) .typst-example-output {
+    background: #f5f5f5;
+    border-left-color: var(--sl-color-gray-4);
+  }
+
+  :global([data-theme="light"]) .typst-example-code :global(.shiki),
+  :global([data-theme="light"]) .typst-example-code :global(.shiki span) {
+    color: var(--shiki-light) !important;
+    background-color: transparent !important;
+  }
+
+  :global([data-theme="dark"]) .typst-example-code :global(.shiki),
+  :global([data-theme="dark"]) .typst-example-code :global(.shiki span) {
+    color: var(--shiki-dark) !important;
+    background-color: transparent !important;
+  }
+</style>

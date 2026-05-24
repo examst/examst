@@ -1,0 +1,33 @@
+name: Deploy Docs to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - disabled/never-run
+
+jobs:
+  deploy:
+    runs-on: codeberg-tiny
+    container:
+      image: node:22
+    steps:
+      - name: Checkout
+        uses: https://code.forgejo.org/actions/checkout@v4
+
+      - name: Install bun
+        run: npm install -g bun
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+        working-directory: docs/web
+
+      - name: Build
+        run: bun run build
+        working-directory: docs/web
+
+      - name: Deploy to Cloudflare Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler pages deploy dist/ --project-name=examst
+        working-directory: docs/web

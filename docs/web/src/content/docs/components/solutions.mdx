@@ -1,0 +1,104 @@
+---
+title: Solutions
+description: Solution environments, answer spaces, and fill patterns
+---
+
+import TypstExample from '../../../components/TypstExample.astro';
+
+examst provides three levels of solution/answer-space functionality:
+
+- **`solution`** — Invisible when hidden, shows framed solution when visible.
+- **`answer`** — Fixed-height region: fill pattern when hidden, solution when visible.
+- **`answer-space`** — Always-visible blank space (not tied to show/hide).
+
+## solution()
+
+Renders nothing when `show-answers` is `false`. When `true`, renders the solution inside a styled frame.
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `title` | `content` or `none` | global setting | Content prepended to the solution |
+| `emphasis` | `function` or `none` | — | Function applied to solution body |
+| `frame` | `str`, `dict`, `function`, or `none` | — | `"boxed"`, `"shaded"`, `"none"`, or custom |
+
+<TypstExample code={`#examst-set(show-answers: true)
+
+  #question(points: 5)[
+    Why is the sky blue?
+    #solution[
+      Rayleigh scattering of sunlight by atmospheric molecules.
+    ]
+  ]
+
+  #examst-reset()`} preamble={`#examst-set(render-question-counter: it => numbering("1.", it.get().last()))`} />
+
+## answer()
+
+Renders a fixed-height answer region. Layout is stable between modes — the space on the page is consistent whether or not answers are shown.
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `height` | `length` | global `solution-height` | Height of the answer region |
+| `fill` | `str` or `function` | `"lines"` | Fill pattern: `"lines"`, `"grid"`, `"none"`, or custom |
+| `frame` | `str`, `dict`, or `function` | — | Framing style |
+| `title` | `content` or `none` | — | Content prepended when shown |
+| `emphasis` | `function` or `none` | — | Applied to solution body |
+| `sol-height` | `none`, `auto`, or `length` | `none` | Height of solution frame when shown |
+
+### Answer with Default Lines
+
+<TypstExample code={`#question(points: 10)[
+    Explain the water cycle.
+    #answer[
+      Evaporation, condensation, precipitation, collection.
+    ]
+  ]`} preamble={`#examst-set(render-question-counter: it => numbering("1.", it.get().last()))`} />
+
+### Answer with Grid Fill
+
+<TypstExample code={`#question(points: 10)[
+    Draw a diagram of a cell.
+    #answer(
+      fill: fill-grid.with(spacing: 0.4in),
+      frame: (stroke: 0.5pt),
+      height: 2in,
+    )[
+      A labeled diagram of an animal cell.
+    ]
+  ]`} preamble={`#examst-set(render-question-counter: it => numbering("1.", it.get().last()))`} />
+
+## answer-space()
+
+Renders an always-visible answer space. Not tied to the `show-answers` toggle — renders unconditionally. Useful for scratch work areas.
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `height` | `length` | global `solution-height` | Height of the space |
+| `fill` | `str` or `function` | — | Fill pattern |
+| `frame` | `str`, `dict`, or `function` | `"none"` | Framing style |
+
+<TypstExample code={`#answer-space()`} />
+
+<TypstExample code={`#answer-space(fill: fill-grid.with(spacing: 0.45in), height: 1in)`} />
+
+<TypstExample code={`#answer-space(fill: "none", frame: "boxed")`} />
+
+## Fill Pattern Helpers
+
+These functions can be used directly or passed as the `fill` argument:
+
+### fill-lines
+
+```typst
+#fill-lines(height, spacing: 0.33in, stroke: 0.5pt)
+```
+
+Fills vertical space with ruled horizontal lines.
+
+### fill-grid
+
+```typst
+#fill-grid(height, spacing: 5mm, stroke: 0.5pt)
+```
+
+Fills vertical space with a grid of squares. Cell size is adjusted so columns divide the available width evenly.

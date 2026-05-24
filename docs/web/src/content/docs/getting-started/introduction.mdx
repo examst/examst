@@ -1,0 +1,22 @@
+---
+title: Introduction
+description: What examst does and why you'd use it
+---
+
+**examst** helps you write exams, quizzes, and homework assignments in Typst with minimal boilerplate. Its main features include:
+
+- **Numbered questions** with automatic counters and nestable sub-parts.
+- **Point tracking** — assign points per-question or per-category, aggregate across sub-parts, and render a summary table.
+- **Multiple-choice** answers with several marker styles (bubbles, checkboxes, letters) and flexible layouts (vertical, grid, inline).
+- **Fill-in-the-blank** lines with configurable width.
+- **Solution environments** that can be shown or hidden globally — including framed solutions, ruled answer spaces, and grid paper.
+- **Global configuration** via `examst-set()` — change rendering, positioning, marker styles, and more in one place.
+
+## Architecture
+
+examst uses a data-driven configuration system. All options are stored in internal state and controlled through two functions:
+
+- `examst-set(..options)` — update one or more settings
+- `examst-reset()` — restore all defaults
+
+Components read from this shared state, so changing a setting once affects all subsequent components in the document.

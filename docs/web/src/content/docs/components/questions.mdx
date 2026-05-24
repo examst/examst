@@ -1,0 +1,85 @@
+---
+title: Questions
+description: Numbered questions with automatic counters and point tracking
+---
+
+import TypstExample from '../../../components/TypstExample.astro';
+
+The `question` function is the core building block for exam content. Questions are automatically numbered, track points, and support arbitrary nesting for sub-parts.
+
+## Basic Usage
+
+```typst
+#question(points: <int|float|dict>, aggregate: <bool>, inline: <bool>, body)
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `points` | `int`, `float`, `dictionary` | `(:)` | Points for this question. A number is shorthand for `(points: n)`. A dict maps categories to values. |
+| `aggregate` | `bool` | `false` | When `true`, points shown are the sum of nested sub-questions. |
+| `inline` | `bool` | `false` | When `true`, renders inline (as a `box` with `width: 1fr`). |
+| `render-question-counter` | `function` or `none` | `none` | Local override for counter display. |
+| `render-points` | `str`, `function`, or `none` | `none` | Local override for point formatting. |
+| `points-position` | `str`, `function`, or `none` | `none` | Local override for point positioning. |
+
+## Nested Questions (Sub-parts)
+
+Questions can be nested to create lettered sub-parts:
+
+<TypstExample code={`#examst-set(
+    render-question-counter: it => [
+      #let depth = it.get().len()
+      #let last = it.get().last()
+      #if depth == 1 { numbering("1.", last) }
+      #if depth == 2 { numbering("(a)", last) }
+    ],
+  )
+
+  #question(aggregate: false)[
+    Thermodynamics
+    #question(points: 6)[State the first law.]
+    #question(points: 4)[State the second law.]
+    #question(points: 5)[State the third law.]
+  ]`} width="400pt" />
+
+## Aggregated Points
+
+Use `aggregate: true` on a parent question to display the sum of its children's points at the parent level:
+
+<TypstExample code={`#examst-set(
+    render-question-counter: it => [
+      #let depth = it.get().len()
+      #let last = it.get().last()
+      #if depth == 1 { numbering("1.", last) }
+      #if depth == 2 { numbering("(a)", last) }
+    ],
+  )
+
+  #question(points: 20, aggregate: true)[
+    #question(inline: true)[Define the universe.]
+    #question()[Give three examples.]
+  ]`} width="400pt" />
+
+## Points Positioning
+
+Control where points appear relative to the question text:
+
+<TypstExample code={`#examst-set(
+    render-question-counter: it => numbering("1.", it.get().last()),
+    points-position: "right-margin",
+    render-points: "boxed",
+  )
+
+  #question(points: 10)[
+    Explain why the sky is blue.
+  ]`} width="400pt" />
+
+### Available Positions
+
+| Position | Description |
+|----------|-------------|
+| `"inline"` | After the counter, before the body (default) |
+| `"before-counter"` | Before the counter |
+| `"after-body"` | At the end of the question |
+| `"left-margin"` / `"right-margin"` | Placed in the page margin |
+| `"two-sided"` / `"two-sided-reversed"` | Alternates margins on odd/even pages |

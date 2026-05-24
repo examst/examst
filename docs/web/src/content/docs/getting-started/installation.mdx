@@ -1,0 +1,44 @@
+---
+title: Installation
+description: How to install and import examst
+---
+
+## From Typst Universe
+
+Once examst is published to the Typst package registry:
+
+```typst
+#import "@preview/examst:0.1.0": *
+```
+
+## Local Development
+
+Clone the repository and import directly:
+
+```typst
+#import "/src/lib.typ": *
+```
+
+## Quick Start
+
+```typst
+#import "@preview/examst:0.1.0": *
+
+#examst-set(
+  render-question-counter: it => numbering("1.", it.get().last()),
+)
+
+#question(points: 10)[
+  Why is the sky blue?
+]
+
+#question(points: 5)[
+  What color is grass?
+  #multi-choice(
+    marker: "bubble-letter",
+    [Red],
+    correct[Green],
+    [Blue],
+  )
+]
+```

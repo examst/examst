@@ -1,0 +1,115 @@
+---
+title: Multi-Choice
+description: Multiple-choice answer options with configurable markers and layouts
+---
+
+import TypstExample from '../../../components/TypstExample.astro';
+
+The `multi-choice` function renders answer options with configurable markers and layouts.
+
+## API
+
+```typst
+#multi-choice(columns: <int|none>, marker: <str|fn>, label: <str>, ..choices)
+```
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `columns` | `int` or `none` | `1` | `1` = vertical list, `none` = inline, `> 1` = grid |
+| `marker` | `str` or `function` | `"bubble"` | Marker preset or custom function |
+| `label` | `str` | `"A"` | Numbering pattern for choice labels |
+| `marker-font` | `str`, `array`, or `none` | `none` | Font for marker letters |
+| `correct-emphasis` | `function` or `none` | — | Function applied to correct text when answers shown |
+| `none-above` | `none`, `bool`, or `auto` | `none` | Append "None of the above" option |
+| `choice-align` | `alignment` | `top` | Vertical alignment within each choice cell |
+
+### Marker Presets
+
+| Marker | Description |
+|--------|-------------|
+| `"bubble"` | Empty circle (radio-style) |
+| `"bubble-letter"` | Circle with letter inside |
+| `"checkbox"` | Empty square |
+| `"checkbox-letter"` | Square with letter inside |
+| `"none"` | No marker, just the label |
+
+### Convenience Aliases
+
+- `select-one(..)` — alias for `multi-choice(marker: "bubble", ..)`
+- `select-many(..)` — alias for `multi-choice(marker: "checkbox", ..)`
+
+### Choice Markers
+
+- `correct[...]` — marks the choice as the correct answer
+- `bad[...]` — marks a choice as "bad fill" (scribble overlay)
+
+## Basic Vertical Layout
+
+<TypstExample code={`#question(points: 5)[
+    What is the capital of France?
+    #multi-choice(
+      marker: "bubble-letter",
+      [London],
+      [Berlin],
+      correct[Paris],
+      [Madrid],
+    )
+  ]`} preamble={`#examst-set(render-question-counter: it => numbering("1.", it.get().last()))`} />
+
+## Grid Layout
+
+<TypstExample code={`#question(points: 5)[
+    Which of these are prime numbers?
+    #select-many(
+      columns: 2,
+      marker: "checkbox-letter",
+      correct[7],
+      [8],
+      correct[11],
+      [12],
+    )
+  ]`} preamble={`#examst-set(render-question-counter: it => numbering("1.", it.get().last()))`} />
+
+## Inline Layout
+
+<TypstExample code={`#question(points: 3)[
+    Is the earth flat?
+    #select-one(
+      marker: "checkbox-letter",
+      columns: none,
+      [Yes],
+      correct[No],
+    )
+  ]`} preamble={`#examst-set(render-question-counter: it => numbering("1.", it.get().last()))`} />
+
+## None of the Above
+
+<TypstExample code={`#question(points: 5)[
+    Which of these animals can fly?
+    #multi-choice(
+      marker: "bubble-letter",
+      none-above: auto,
+      [Dog],
+      [Cat],
+      [Fish],
+    )
+  ]`} preamble={`#examst-set(render-question-counter: it => numbering("1.", it.get().last()))`} />
+
+## Showing Answers
+
+When `show-answers` is `true`, correct choices are filled and emphasized:
+
+<TypstExample code={`#examst-set(show-answers: true)
+
+  #question(points: 5)[
+    What is 2 + 2?
+    #multi-choice(
+      marker: "bubble-letter",
+      [3],
+      correct[4],
+      [5],
+      [6],
+    )
+  ]
+
+  #examst-reset()`} preamble={`#examst-set(render-question-counter: it => numbering("1.", it.get().last()))`} />

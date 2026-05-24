@@ -24,6 +24,7 @@
             typst
             typstyle
             tinymist
+            bun
           ];
         };
       }
