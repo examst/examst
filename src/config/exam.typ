@@ -35,11 +35,11 @@
 
   show ref: it => {
     let el = it.element
-    let supplement = if it.supplement == auto {"Q"}
-    else if it.supplement == none or it.supplement == "" or it.supplement == [] {""}
+    let supplement = if it.supplement == auto [Q]
+    else if it.supplement == none or it.supplement == "" or it.supplement == [] []
     else {it.supplement}
 
-    if el != none and (el.func() == metadata) {
+    if el != none and (el.func() == metadata) and type(el.value) == content {
       // Override question references.
       supplement + el.value
     } else {
