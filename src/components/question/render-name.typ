@@ -8,6 +8,6 @@
   "boxed": name => {
     if name != none { box(stroke: 0.5pt, outset: 0.4em, inset: 0.0em)[#name] }
   },
-  "raw": name => [#name]
+  "raw": name => {if name != none [#name]}
 
 )
