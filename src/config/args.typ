@@ -87,6 +87,7 @@
   default,
   allow-func,
 ) = {
+  let default-st = state("examst:default:" + name, default)
   let st = state("examst:" + name, default)
 
   (
@@ -108,6 +109,21 @@
       )
       st.update(_ => value)
     },
+    update-default: value => {
+      assert(
+        checker(value, false),
+        message: "examst: `"
+          + name
+          + "` must be "
+          + type-str-fn(false)
+          + ", found: "
+          + repr(value),
+      )
+      // Update both the remembered default (so `reset` returns here) and the
+      // live value (so the new default takes effect immediately).
+      default-st.update(_ => value)
+      st.update(_ => value)
+    },
     type-check: value => {
       if allow-func and type(value) == function {
         value = value()
@@ -125,7 +141,8 @@
 
       value
     },
-    reset: () => {
+    reset: () => context {
+      let default = default-st.get()
       st.update(_ => default)
     },
     default: default,
@@ -160,11 +177,6 @@
   }
 
   out
-}
-
-/// Extracts defaults from all args as a flat dictionary.
-#let __examst-defaults = {
-  __examst-args.pairs().map(((key, value)) => (key, value.default)).to-dict()
 }
 
 /// Saves current state of all args. Must be called in a context.

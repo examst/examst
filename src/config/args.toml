@@ -5,11 +5,25 @@ default = "false"
 types = ["bool"]
 function = false
 
+[question-numbering]
+title = "Question Numbering"
+description = "How question numbers should display independently. It takes the question-number counter."
+default = '(it) => [#it.display("1.1")]'
+types = ["function"]
+function = false
+
 [render-question-counter]
 title = "Render Question Counter"
-description = "How the question counter is rendered. Takes the question-number counter."
-default = '(it) => [Q#it.display("1.1.")]'
+description = "How the question number is rendered in a question. Takes the question-number counter and question-numbering."
+default = '(it, qn) => [Q#qn(it).]'
 types = ["function"]
+function = false
+
+[render-name]
+title = "Render Name"
+description = "How the questio name is formatted. Either a preset name or a function taking a string."
+default = '"parenthesized"'
+types = ["str:parenthesized", "str:boxed", "str:bracketed", "str:raw", "function"]
 function = false
 
 [render-points]
@@ -21,9 +35,9 @@ function = false
 
 [points-position]
 title = "Points Position"
-description = "Where points are displayed in the question layout. Options: inline, before-counter, after-body, left-margin, right-margin, or a custom function."
+description = "Where points are displayed in the question layout. Options: inline, before-counter, before-name, after-body, left-margin, right-margin, or a custom function."
 default = '"inline"'
-types = ["str:inline", "str:before-counter", "str:after-body", "str:left-margin", "str:right-margin", "str:two-sided", "str:two-sided-reversed", "function"]
+types = ["str:inline", "str:before-counter", "str: before-name", "str:after-body", "str:left-margin", "str:right-margin", "str:two-sided", "str:two-sided-reversed", "function"]
 function = false
 
 [multi-choice-columns]

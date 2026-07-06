@@ -2,9 +2,10 @@
 #import "../../state.typ" as state
 
 #let next-q-start-label() = {
-  let labels = query(selector(metadata).after(here())).filter(it => {
-    (type(it.value) == str) and (it.value.starts-with("q-start"))
-  })
+  let labels = query(selector(metadata).after(here()))
+    .filter(it => {
+      (type(it.value) == str) and (it.value.starts-with("q-start"))
+    })
   if labels.len() > 0 {
     return labels.first().label
   } else {
@@ -12,39 +13,45 @@
   }
 }
 
-#let _q-start-label-text() = strfmt(
-  "q-start:{num}",
-  num: state._question-number.get().map(it => str(it)).join("."),
+#let _q-num-text() = {
+  let numbers = state._question-number.get();
+  let end-depth = state._question-depth.get()
+
+  numbers.slice(0, end-depth).map(it => str(it)).join(".")
+}
+
+#let _label-text(left-str, right-str) = strfmt(
+  "{left}:{right}",
+  left: left-str,
+  right: right-str
 )
 
-#let _q-start-label() = label(_q-start-label-text())
+#let _q-start-label() = label(_label-text("q-start", _q-num-text()))
+#let _q-end-label() = label(_label-text("q-end", _q-num-text()))
 
-#let _q-end-label-text() = strfmt(
-  "q-end:{num}",
-  num: state
-    ._question-number
-    .get()
-    .slice(0, state._question-depth.get())
-    .map(it => str(it))
-    .join("."),
-)
+#let _emit-label(label-str, meta: none) = [
+  #if meta != none {metadata(meta)} else {metadata(label-str)}
+  #label(label-str)
+]
 
-#let _q-end-label() = label(_q-end-label-text())
-
-#let _q-start(points) = {
+#let _q-start(points, label-str, render-ctr) = {
   context [
-    #metadata(_q-start-label-text())
-    #_q-start-label()
+    #_emit-label(_label-text("q-start", _q-num-text()))
+    #if label-str != none {
+      _emit-label(label-str, meta: render-ctr(state._question-number))
+      _emit-label(_label-text(label-str, "start"))
+    }
 
-    #metadata(points)
-    #label("points")
+    #_emit-label("points", meta: points)
   ]
 }
 
-#let _q-end() = {
+#let _q-end(label-str) = {
   context [
-    #metadata(_q-end-label-text())
-    #_q-end-label()
+    #_emit-label(_label-text("q-end", _q-num-text()))
+    #if label-str != none {
+      _emit-label(_label-text(label-str, "end"))
+    }
   ]
 }
 
