@@ -18,8 +18,6 @@
   #qn(it)
 ]
 
-#show: examst-init.with()
-
 #question(points: 10, name: [The air question], label: "air-q", aggregate: true)[
   Why is there air?
 ]
