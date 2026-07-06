@@ -2,7 +2,7 @@
 
 #set page(paper: "us-letter")
 
-#let question-counter = it => [
+#let question-counter = (it, un) => [
   #let depth = it.get().len()
   #let last = it.get().last()
   #if depth == 1 {

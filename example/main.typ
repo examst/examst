@@ -1,8 +1,10 @@
 #import "../src/lib.typ": *
 
+#show: examst-init.with()
+
 #set page(paper: "us-letter")
 
-#let question-counter = it => [
+#let question-numbering = it => [
   #let depth = it.get().len()
   #let last = it.get().last()
   #if depth == 1 {
@@ -12,19 +14,24 @@
   }
 ]
 
-#examst-set(render-question-counter: question-counter)
+#let question-counter = (it, qn) => [
+  #qn(it)
+]
 
-#question(points: 10, aggregate: true)[
+#question(points: 10, name: [The air question], label: "air-q", aggregate: true)[
   Why is there air?
 ]
 
-#question(aggregate: false)[
+#question(aggregate: false, name: [The no-air question], label: "no-air-q")[
   What if there were no air?
-  #question(points: 5)[
+  #question(points: 5, label: "baloons")[
     Describe the effect on the balloon industry.
+    #question(points: 700)[
+      Why not? @baloons[Q]--@baloons-end[]
+    ]
   ]
 
-  #question(points: 5)[
+  #question(points: 5, label: "baloons-end")[
     Describe the effect on the aircraft industry.
   ]
 ]
@@ -70,6 +77,7 @@
 
 #examst-reset()
 #examst-set(
+  question-numbering: question-numbering,
   render-question-counter: question-counter,
   render-points: "bracketed",
 )
@@ -92,6 +100,7 @@
 = Points before counter
 
 #examst-set(
+  question-numbering: question-numbering,
   render-question-counter: question-counter,
   points-position: "before-counter",
 )
@@ -114,6 +123,7 @@
 = Points after body
 
 #examst-set(
+  question-numbering: question-numbering,
   render-question-counter: question-counter,
   points-position: "after-body",
 )
@@ -136,6 +146,7 @@
 = Points in the left margin
 
 #examst-set(
+  question-numbering: question-numbering,
   render-question-counter: question-counter,
   points-position: "left-margin",
 )
@@ -158,6 +169,7 @@
 = Points in the right margin
 
 #examst-set(
+  question-numbering: question-numbering,
   render-question-counter: question-counter,
   render-points: "boxed",
   points-position: "two-sided",
@@ -230,6 +242,7 @@
     columns: none,
     [Yes],
     correct[No],
+    [wtf]
   )
 ]
 
@@ -273,7 +286,7 @@
 
 = Solution examples
 
-#examst-set(render-question-counter: question-counter)
+#examst-set(question-numbering: question-numbering)
 
 == solution() — hidden: nothing, shown: framed
 
