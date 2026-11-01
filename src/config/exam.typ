@@ -43,7 +43,7 @@
 
     if el != none and (el.func() == metadata) and _validate-question-label-meta(el.value) {
       // Override question references.
-      supplement + _get-question-label-value(el.value)
+      link(el.location(), supplement + _get-question-label-value(el.value))
     } else {
       // Other references as usual.
       it
