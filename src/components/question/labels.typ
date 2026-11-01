@@ -1,6 +1,6 @@
 #import "@preview/oxifmt:1.0.0": strfmt
 #import "../../state.typ" as state
-
+#import "meta.typ": _ilabel, _set-points-meta, _get-points-value, _set-question-label-meta
 // Label Utilities
 
 /* Join text for label names */
@@ -8,12 +8,6 @@
   "{left}:{right}",
   left: left-str,
   right: right-str
-)
-
-/* Internal label prefix */
-#let _ilabel(label-str) = strfmt(
-  "examst-internal:{label}",
-  label: label-str,
 )
 
 /* Emits a label attached to metadata.*/
@@ -40,11 +34,12 @@
 // Points labels
 
 #let _points-label = label(_ilabel("points"))
+
 #let points-between(start-label, end-label) = (
   query(
     selector(_points-label).after(start-label).before(end-label),
   )
-    .map(it => it.value)
+    .map(it => _get-points-value(it.value))
     .fold(
       (:),
       (acc, curr) => {
@@ -93,11 +88,11 @@
   context [
     #_emit-label(_q-start-label())
     #if label-str != none {
-      _emit-label(label-str, meta: render-ctr(state._question-number))
+      _emit-label(label-str, meta: _set-question-label-meta(render-ctr(state._question-number)))
       _emit-label(_join-text(label-str, "start"))
     }
 
-    #_emit-label(_points-label, meta: points)
+    #_emit-label(_points-label, meta: _set-points-meta(points))
   ]
 }
 

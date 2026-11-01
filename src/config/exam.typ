@@ -1,4 +1,5 @@
 #import "args.typ": __examst-args
+#import "../components/question/meta.typ": _validate-question-label-meta, _get-question-label-value
 
 /// Installs examst's document-wide rules (question reference overrides, etc.).
 /// Apply once at the top of your document with a set-rule-style show:
@@ -39,9 +40,10 @@
     else if it.supplement == none or it.supplement == "" or it.supplement == [] []
     else {it.supplement}
 
-    if el != none and (el.func() == metadata) and type(el.value) == content {
+
+    if el != none and (el.func() == metadata) and _validate-question-label-meta(el.value) {
       // Override question references.
-      supplement + el.value
+      supplement + _get-question-label-value(el.value)
     } else {
       // Other references as usual.
       it
