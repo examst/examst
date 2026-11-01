@@ -88,7 +88,7 @@
   context [
     #_emit-label(_q-start-label())
     #if label-str != none {
-      _emit-label(label-str, meta: _set-question-label-meta(render-ctr(state._question-number)))
+      _emit-label(label-str, meta: _set-question-label-meta([#render-ctr(state._question-number)]))
       _emit-label(_join-text(label-str, "start"))
     }
 
