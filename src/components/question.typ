@@ -2,19 +2,23 @@
 #import "../config/args.typ": __examst-args, __examst-default, arg-or-default
 #import "question/labels.typ": *
 #import "question/render-points.typ": *
+#import "question/render-name.typ": *
 #import "question/points-position.typ": *
 
-// TODO: design consideration, should we do it like this or should it be like a grid where
-// ------------------------------------------
-// | Qnumber | content                      |
-// ------------------------------------------
-//           ^ align this to margin
+#let qref(label) = context {
+  state._question-number.at(label)
+}
+
+
 #let question(
-  // TODO: consider if this is good semantics
+  question-numbering: __examst-default,
   render-question-counter: __examst-default,
+  render-name: __examst-default,
   render-points: __examst-default,
   points-position: __examst-default,
   points: (:),
+  name: none,
+  label: none,
   aggregate: false,
   inline: false,
   body,
@@ -29,6 +33,23 @@
   let _render-counter = arg-or-default(
     render-question-counter,
     "render-question-counter",
+  )
+
+
+  let _render-name = arg-or-default(
+    render-name,
+    "render-name",
+  )
+
+  let _render-name = if type(_render-name) == str {
+    render-name-configs.at(_render-name)
+  } else {
+    _render-name
+  }
+
+  let _question-numbering = arg-or-default(
+    question-numbering,
+    "question-numbering",
   )
 
   let _render-pts = arg-or-default(
@@ -63,10 +84,11 @@
     state._question-depth.update(it => it + 1)
 
     context [
-      #state._question-number.step(level: state._question-depth.get())
+      #let depth = state._question-depth.get()
+      #state._question-number.step(level: depth)
     ]
 
-    _q-start(_points)
+    _q-start(_points, label, _question-numbering)
 
     // Compute the rendered points content
     let _pts-content = context {
@@ -84,15 +106,15 @@
       _render-pts(_pts)
     }
 
-    let _counter-content = context [#_render-counter(state._question-number)]
+    let _counter-content = context [#_render-counter(state._question-number, _question-numbering)]
     let _depth = state._question-depth.get()
 
-    _pts-position(_pts-content, _counter-content, body, _depth)
+    let _name-content = context [#_render-name(name)]
 
-    _q-end()
+    _pts-position(_pts-content, _counter-content, _name-content, body, _depth)
 
-    context [
-      #state._question-depth.update(it => it - 1)
-    ]
+    _q-end(label)
+    
+    state._question-depth.update(it => it - 1)
   })
 }

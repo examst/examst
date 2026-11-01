@@ -100,7 +100,7 @@
     correct-emphasis,
     show-answers,
   )
-  box(height: 0em, baseline: -0.3em, inset: (x: 0.25em), stroke: 1pt, align(
+  box(height: 0em, baseline: -0.3em, inset: (x: 0.25em), align(
     horizon,
     stack(dir: ltr, spacing: 0.35em, c.marker, c.body),
   ))

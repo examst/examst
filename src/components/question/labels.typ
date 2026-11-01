@@ -1,59 +1,45 @@
 #import "@preview/oxifmt:1.0.0": strfmt
 #import "../../state.typ" as state
+#import "meta.typ": _ilabel, _set-points-meta, _get-points-value, _set-question-label-meta
+// Label Utilities
 
-#let next-q-start-label() = {
-  let labels = query(selector(metadata).after(here())).filter(it => {
-    (type(it.value) == str) and (it.value.starts-with("q-start"))
-  })
-  if labels.len() > 0 {
-    return labels.first().label
+/* Join text for label names */
+#let _join-text(left-str, right-str) = strfmt(
+  "{left}:{right}",
+  left: left-str,
+  right: right-str
+)
+
+/* Emits a label attached to metadata.*/
+#let _emit-label(label-arg, meta: none) = {
+  let label-str = ""
+  let label-ref = none
+
+  if type(label-arg) == label {
+    label-str = str(label-arg)
+    label-ref = label-arg
+  } else if type(label-arg) == str {
+    label-str = label-arg
+    label-ref = label(label-arg)
   } else {
-    return none
+    panic("examst-internal: tried to emit an object of type " + str(type(label-arg)) +": " + str(label-arg))
   }
-}
 
-#let _q-start-label-text() = strfmt(
-  "q-start:{num}",
-  num: state._question-number.get().map(it => str(it)).join("."),
-)
-
-#let _q-start-label() = label(_q-start-label-text())
-
-#let _q-end-label-text() = strfmt(
-  "q-end:{num}",
-  num: state
-    ._question-number
-    .get()
-    .slice(0, state._question-depth.get())
-    .map(it => str(it))
-    .join("."),
-)
-
-#let _q-end-label() = label(_q-end-label-text())
-
-#let _q-start(points) = {
-  context [
-    #metadata(_q-start-label-text())
-    #_q-start-label()
-
-    #metadata(points)
-    #label("points")
+  [
+    #if meta != none {metadata(meta)} else {metadata(label-str)}
+    #label-ref
   ]
 }
 
-#let _q-end() = {
-  context [
-    #metadata(_q-end-label-text())
-    #_q-end-label()
-  ]
-}
+// Points labels
 
+#let _points-label = label(_ilabel("points"))
 
 #let points-between(start-label, end-label) = (
   query(
-    selector(<points>).after(start-label).before(end-label),
+    selector(_points-label).after(start-label).before(end-label),
   )
-    .map(it => it.value)
+    .map(it => _get-points-value(it.value))
     .fold(
       (:),
       (acc, curr) => {
@@ -67,3 +53,54 @@
       },
     )
 )
+
+
+// Question Number Labels
+
+#let _q-num-text() = {
+  let numbers = state._question-number.get();
+  let end-depth = state._question-depth.get()
+
+  numbers.slice(0, end-depth).map(it => str(it)).join(".")
+}
+
+#let _q-start-label() = label(
+  _ilabel(_join-text("q-start", _q-num-text()))
+)
+
+#let _q-end-label() = label(
+  _ilabel(_join-text("q-end", _q-num-text()))
+)
+
+#let next-q-start-label() = {
+  let labels = query(selector(metadata).after(here()))
+    .filter(it => {
+      (type(it.value) == str) and (it.value.starts-with(_ilabel("q-start")))
+    })
+  if labels.len() > 0 {
+    return labels.first().label
+  } else {
+    return none
+  }
+}
+
+#let _q-start(points, label-str, render-ctr) = {
+  context [
+    #_emit-label(_q-start-label())
+    #if label-str != none {
+      _emit-label(label-str, meta: _set-question-label-meta([#render-ctr(state._question-number)]))
+      _emit-label(_join-text(label-str, "start"))
+    }
+
+    #_emit-label(_points-label, meta: _set-points-meta(points))
+  ]
+}
+
+#let _q-end(label-str) = {
+  context [
+    #_emit-label(_q-end-label())
+    #if label-str != none {
+      _emit-label(_join-text(label-str, "end"))
+    }
+  ]
+}

@@ -5,7 +5,12 @@
 
 #import "../state.typ" as state
 #import "../config/args.typ": __examst-args, is-show-answers
-#import "question/labels.typ": points-between
+#import "question/labels.typ": points-between, _ilabel
+
+// ── Labels ─────────────────────────────────────────────────────────
+
+#let q-start = _ilabel("q-start:")
+#let q-end = _ilabel("q-end:")
 
 // ── Query infrastructure ───────────────────────────────────────────
 
@@ -14,17 +19,17 @@
 /// Returns array of (number: str, points: dict, depth: int).
 #let _collect-at-depth(target-depth) = {
   let all-starts = query(selector(metadata)).filter(it => (
-    type(it.value) == str and it.value.starts-with("q-start:")
+    type(it.value) == str and it.value.starts-with(q-start)
   ))
 
   all-starts
     .filter(it => {
-      let num = it.value.slice("q-start:".len())
+      let num = it.value.slice(q-start.len())
       num.split(".").len() == target-depth
     })
     .map(it => {
-      let num = it.value.slice("q-start:".len())
-      let pts = points-between(label("q-start:" + num), label("q-end:" + num))
+      let num = it.value.slice(q-start.len())
+      let pts = points-between(label(q-start + num), label(q-end + num))
       (number: num, points: pts, depth: target-depth)
     })
 }
